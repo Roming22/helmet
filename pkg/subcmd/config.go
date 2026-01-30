@@ -111,10 +111,10 @@ func (c *Config) PersistentFlags(p *pflag.FlagSet) {
 // validateFlags validates the flags passed to the subcommand.
 func (c *Config) validateFlags() error {
 	if c.get && c.delete {
-		return fmt.Errorf("cannot get and delete at the same time")
+		return fmt.Errorf("cannot use --get and --delete at the same time")
 	}
 	if !c.create && !c.force && !c.get && !c.delete {
-		return fmt.Errorf("either create, get or delete must be set")
+		return fmt.Errorf("either --create, --get or --delete must be set")
 	}
 	if c.cmd.Flags().Changed("namespace") && !c.create {
 		return fmt.Errorf("--namespace flag can only be used with --create")
