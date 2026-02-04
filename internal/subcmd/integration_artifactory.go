@@ -21,9 +21,6 @@ type IntegrationArtifactory struct {
 	cfg         *config.Config           // installer configuration
 	kube        *k8s.Kube                // kubernetes client
 	integration *integration.Integration // integration instance
-
-	apiToken         string // web API token
-	dockerconfigjson string // credentials to push/pull from the registry
 }
 
 var _ api.SubCommand = &IntegrationArtifactory{}
@@ -42,7 +39,7 @@ func (a *IntegrationArtifactory) Cmd() *cobra.Command {
 }
 
 // Complete is a no-op in this case.
-func (a *IntegrationArtifactory) Complete(args []string) error {
+func (a *IntegrationArtifactory) Complete(_ []string) error {
 	var err error
 	a.cfg, err = bootstrapConfig(a.cmd.Context(), a.appCtx, a.kube)
 	return err

@@ -51,7 +51,7 @@ func (q *IntegrationQuay) Cmd() *cobra.Command {
 }
 
 // Complete is a no-op in this case.
-func (q *IntegrationQuay) Complete(args []string) error {
+func (q *IntegrationQuay) Complete(_ []string) error {
 	var err error
 	q.cfg, err = bootstrapConfig(q.cmd.Context(), q.appCtx, q.kube)
 	return err

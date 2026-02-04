@@ -6,9 +6,11 @@ import (
 	"testing"
 )
 
-const emptyInput = "empty input"
-const validInput = "valid input"
-const invalidInput = "invalid input"
+const (
+	emptyInput   = "empty input"
+	validInput   = "valid input"
+	invalidInput = "invalid input"
+)
 
 func TestToYAML(t *testing.T) {
 	tests := []struct {

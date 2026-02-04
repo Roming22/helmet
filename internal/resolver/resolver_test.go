@@ -34,9 +34,10 @@ func TestNewResolver(t *testing.T) {
 		g.Expect(err).To(o.Succeed())
 
 		// Extracting the Helm chart names and namespaces from the topology.
+		deps := topology.Dependencies()
 		dependencyNamespaceMap := map[string]string{}
-		dependencySlice := []string{}
-		for _, d := range topology.Dependencies() {
+		dependencySlice := make([]string, 0, len(deps))
+		for _, d := range deps {
 			dependencyNamespaceMap[d.Name()] = d.Namespace()
 			dependencySlice = append(dependencySlice, d.Name())
 		}

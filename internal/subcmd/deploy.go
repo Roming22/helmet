@@ -114,7 +114,7 @@ func (d *Deploy) Run() error {
 	if err != nil {
 		if errors.Is(err, resolver.ErrMissingIntegrations) ||
 			errors.Is(err, resolver.ErrPrerequisiteIntegration) {
-			return fmt.Errorf(`%s
+			return fmt.Errorf(`%w
 
 Required integrations are missing from the cluster, run the "%s integration"
 subcommand to configure them. For example:
@@ -123,7 +123,6 @@ subcommand to configure them. For example:
 	$ %s integration <name> --help
 	`,
 				err, d.appCtx.Name, d.appCtx.Name, d.appCtx.Name)
-
 		}
 		return err
 	}

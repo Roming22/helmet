@@ -39,7 +39,7 @@ func (t *IntegrationTrustification) Cmd() *cobra.Command {
 }
 
 // Complete is a no-op in this case.
-func (t *IntegrationTrustification) Complete(args []string) error {
+func (t *IntegrationTrustification) Complete(_ []string) error {
 	var err error
 	t.cfg, err = bootstrapConfig(t.cmd.Context(), t.appCtx, t.kube)
 	return err

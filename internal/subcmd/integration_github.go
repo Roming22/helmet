@@ -64,7 +64,7 @@ func (g *IntegrationGitHub) Complete(args []string) error {
 
 	if len(args) != 1 {
 		return fmt.Errorf(
-			"expected 1, got %d arguments. The GitHub App name is required.",
+			"expected 1, got %d arguments; the GitHub App name is required",
 			len(args),
 		)
 	}

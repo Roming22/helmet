@@ -59,7 +59,7 @@ test-unit:
 
 # Uses golangci-lint to inspect the code base.
 .PHONY: lint
-lint: tool-golangci-lint
+lint: build tool-golangci-lint
 	golangci-lint run ./...
 
 #

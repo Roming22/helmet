@@ -16,6 +16,8 @@ import (
 // The logger is automatically configured to write to io.Discard because MCP
 // server uses STDIO for protocol communication. Any output to stdout/stderr will
 // corrupt the MCP protocol messages.
+//
+//nolint:revive
 type MCPToolsContext struct {
 	AppCtx             *api.AppContext       // application context
 	Logger             *slog.Logger          // discard logger
@@ -50,4 +52,6 @@ func NewMCPToolsContext(
 
 // MCPToolsBuilder is a function that creates MCP tools given a context.
 // Consumers can provide custom builders to customize which tools are registered.
+//
+//nolint:revive
 type MCPToolsBuilder func(MCPToolsContext) ([]Interface, error)

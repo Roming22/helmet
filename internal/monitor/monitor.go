@@ -45,8 +45,8 @@ func (m *Monitor) Collect(ctx context.Context, r *resource.Info) error {
 	)
 	logger.Debug("Inspecting resource for monitoring...")
 
-	switch fmt.Sprintf("%s/%s", gv, gvk.Kind) {
-	case "project.openshift.io/v1/ProjectRequest":
+	groupVersionKind := fmt.Sprintf("%s/%s", gv, gvk.Kind)
+	if groupVersionKind == "project.openshift.io/v1/ProjectRequest" {
 		logger.Debug("ProjectRequest detected, waiting for namespace creation...")
 		fn, err := AssertNamespaceFn(ctx, m.logger, m.kube, r.Name)
 		if err != nil {
