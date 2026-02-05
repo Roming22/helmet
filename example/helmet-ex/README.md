@@ -99,6 +99,14 @@ The build process:
 ./bin/helmet-ex integration acs --help
 ```
 
+**GitHub integration:** Webhook and homepage URLs are required; callback URL is optional. Supply them via flags or a custom `URLProvider`. Example (flags):
+
+```bash
+./bin/helmet-ex integration github --webhook-url=https://your-webhook.example.com --homepage-url=https://your-app.example.com [--callback-url=https://...] <app-name>
+```
+
+See the framework documentation for URLProvider-based configuration.
+
 All integrations:
 - `acs` - Red Hat Advanced Cluster Security
 - `artifactory` - JFrog Artifactory
