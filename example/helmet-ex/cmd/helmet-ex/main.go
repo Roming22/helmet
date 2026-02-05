@@ -9,7 +9,7 @@ import (
 	"github.com/redhat-appstudio/helmet/framework"
 )
 
-// Build-time variables (injected via ldflags)
+// Build-time variables (injected via ldflags).
 var (
 	version  = "v0.0.0-SNAPSHOT"
 	commitID = "unknown"
@@ -77,7 +77,6 @@ demonstrating a multi-product topology with foundation, infrastructure,
 operators, storage, networking, integrations, and product layers.`),
 	)
 }
-
 
 // buildMCPImage constructs the container image reference for the MCP server.
 // Uses the commit ID for versioning when available, falls back to 'latest'.

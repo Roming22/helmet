@@ -62,7 +62,7 @@ func (a *App) setupRootCmd() error {
 	a.flags.PersistentFlags(a.rootCmd.PersistentFlags())
 
 	// Handle version flag and help.
-	a.rootCmd.RunE = func(cmd *cobra.Command, args []string) error {
+	a.rootCmd.RunE = func(cmd *cobra.Command, _ []string) error {
 		if a.flags.Version {
 			a.flags.ShowVersion(
 				a.AppCtx.Name, a.AppCtx.Version, a.AppCtx.CommitID)

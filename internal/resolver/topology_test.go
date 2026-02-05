@@ -53,7 +53,7 @@ func TestNewTopology(t *testing.T) {
 	t.Run("GetDependencies", func(t *testing.T) {
 		deps := topology.Dependencies()
 		g.Expect(deps).ToNot(o.BeNil())
-		names := []string{}
+		names := make([]string, 0, len(deps))
 		for _, d := range deps {
 			names = append(names, d.Name())
 		}

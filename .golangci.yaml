@@ -48,6 +48,11 @@ linters:
     - unused
     - usestdlibvars
     - wastedassign
+  settings:
+    gomoddirectives:
+      replace-allow-list:
+        - github.com/Microsoft/hcsshim
+        - github.com/imdario/mergo
   exclusions:
     generated: lax
     presets:
@@ -59,10 +64,10 @@ linters:
       - linters:
           - revive
         path: (.+)_test.go
-    paths:
-      - third_party$
-      - builtin$
-      - examples$
+      - linters:
+          - revive
+        path: ^api/
+        text: "var-naming: avoid meaningless package names"
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0

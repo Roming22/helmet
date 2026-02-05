@@ -47,7 +47,7 @@ func (m *Manager) Integration(name IntegrationName) *integration.Integration {
 
 // IntegrationNames returns a list of all integration names.
 func (m *Manager) IntegrationNames() []string {
-	names := []string{}
+	names := make([]string, 0, len(m.integrations))
 	for name := range m.integrations {
 		names = append(names, string(name))
 	}
@@ -56,7 +56,7 @@ func (m *Manager) IntegrationNames() []string {
 
 // GetModules returns the list of registered integration modules.
 func (m *Manager) GetModules() []api.IntegrationModule {
-	modules := []api.IntegrationModule{}
+	modules := make([]api.IntegrationModule, 0, len(m.modules))
 	for _, mod := range m.modules {
 		modules = append(modules, mod)
 	}

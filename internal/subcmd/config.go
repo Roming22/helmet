@@ -215,10 +215,9 @@ func (c *Config) runCreate() error {
 			if c.force {
 				c.log().Debug("Updating the configuration in the cluster")
 				return c.manager.Update(c.cmd.Context(), cfg)
-			} else {
-				return fmt.Errorf(
-					"the configuration already exists, use --force to amend it")
 			}
+			return fmt.Errorf(
+				"the configuration already exists, use --force to amend it")
 		}
 	}
 	return err

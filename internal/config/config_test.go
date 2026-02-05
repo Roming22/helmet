@@ -61,7 +61,7 @@ func TestNewConfigFromFile(t *testing.T) {
 
 		configString := cfg.String()
 		g.Expect(err).To(o.Succeed())
-		g.Expect(string(configString)).To(o.ContainSubstring("tssc:"))
+		g.Expect(configString).To(o.ContainSubstring("tssc:"))
 
 		// Asserting the original configuration looks like the marshaled one.
 		g.Expect(string(original)).To(o.Equal(configString))
@@ -77,8 +77,8 @@ func TestNewConfigFromFile(t *testing.T) {
 		err := cfg.Set("tssc.settings", data)
 		g.Expect(err).To(o.Succeed())
 		configString := cfg.String()
-		g.Expect(string(configString)).To(o.ContainSubstring("crc: true"))
-		g.Expect(string(configString)).To(o.ContainSubstring("debug: true"))
+		g.Expect(configString).To(o.ContainSubstring("crc: true"))
+		g.Expect(configString).To(o.ContainSubstring("debug: true"))
 	})
 
 	t.Run("SetProducts", func(t *testing.T) {
@@ -99,10 +99,10 @@ func TestNewConfigFromFile(t *testing.T) {
 		g.Expect(err).To(o.Succeed())
 
 		configString := cfg.String()
-		g.Expect(string(configString)).To(o.ContainSubstring("namespace: productAtest"))
-		g.Expect(string(configString)).To(o.ContainSubstring("enabled: false"))
-		g.Expect(string(configString)).To(o.ContainSubstring("catalogURL: https://someIP.io"))
-		g.Expect(string(configString)).To(o.ContainSubstring("authProvider: gitlab"))
+		g.Expect(configString).To(o.ContainSubstring("namespace: productAtest"))
+		g.Expect(configString).To(o.ContainSubstring("enabled: false"))
+		g.Expect(configString).To(o.ContainSubstring("catalogURL: https://someIP.io"))
+		g.Expect(configString).To(o.ContainSubstring("authProvider: gitlab"))
 	})
 
 	t.Run("FlattenMap", func(t *testing.T) {

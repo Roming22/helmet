@@ -23,7 +23,7 @@ func NewIntegration(
 	cmd := &cobra.Command{
 		Use:   "integration <type>",
 		Short: "Configures an external service provider for TSSC",
-		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
+		PersistentPostRunE: func(cmd *cobra.Command, _ []string) error {
 			cfg, err := bootstrapConfig(cmd.Context(), appCtx, kube)
 			if err != nil {
 				return err

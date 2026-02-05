@@ -133,9 +133,6 @@ func (t *Template) Run() error {
 	if t.showValues {
 		// Displaying the rendered values as properties, where it's easier to
 		// verify settings by inspecting key-value pairs.
-		if t.flags.Debug {
-			// i.PrintValues()
-		}
 		// Show values as YAML.
 		i.PrintRawValues()
 	}

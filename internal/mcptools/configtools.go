@@ -61,7 +61,7 @@ const (
 // installer's default.
 func (c *ConfigTools) getHandler(
 	ctx context.Context,
-	ctr mcp.CallToolRequest,
+	_ mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
 	cfg, err := c.cm.GetConfig(ctx)
 	// The cluster is already configured, showing the user the existing
@@ -79,7 +79,7 @@ func (c *ConfigTools) getHandler(
 
 	// The cluster is not configured yet, showing the user a default configuration
 	// and hints on how to proceed.
-	if cfg, err = config.NewConfigDefault(c.cfs, ""); err != nil {
+	if _, err = config.NewConfigDefault(c.cfs, ""); err != nil {
 		return nil, err
 	}
 

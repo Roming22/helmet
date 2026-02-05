@@ -28,7 +28,7 @@ func TestNewChartFS(t *testing.T) {
 
 		// Asserting the chart templates are present, it should contain at least a
 		// few files, plus the presence of the "NOTES.txt" common file.
-		names := []string{}
+		names := make([]string, 0, len(chart.Templates))
 		for _, tmpl := range chart.Templates {
 			names = append(names, tmpl.Name)
 		}

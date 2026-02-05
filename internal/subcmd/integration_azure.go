@@ -38,7 +38,7 @@ func (a *IntegrationAzure) Cmd() *cobra.Command {
 }
 
 // Complete is a no-op in this case.
-func (a *IntegrationAzure) Complete(args []string) error {
+func (a *IntegrationAzure) Complete(_ []string) error {
 	var err error
 	a.cfg, err = bootstrapConfig(a.cmd.Context(), a.appCtx, a.kube)
 	return err

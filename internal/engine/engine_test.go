@@ -51,7 +51,7 @@ func TestEngine_Render(t *testing.T) {
 	// Unmarshal the rendered payload to check the actual structure of the YAML
 	// file created with the template engine.
 	var outputMap map[string]interface{}
-	err = yaml.Unmarshal([]byte(payload), &outputMap)
+	err = yaml.Unmarshal(payload, &outputMap)
 	g.Expect(err).To(o.Succeed())
 	g.Expect(outputMap).NotTo(o.BeEmpty())
 
