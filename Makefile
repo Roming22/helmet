@@ -1,7 +1,7 @@
 APP = helmet
 
 # Primary source code directories.
-PKG ?= ./internal/...
+PKG ?= ./api/... ./framework/... ./internal/...
 
 # Golang general flags for build and testing.
 GOFLAGS ?= -v
