@@ -37,7 +37,7 @@ func (n *IntegrationNexus) Cmd() *cobra.Command {
 // Complete is a no-op in this case.
 func (n *IntegrationNexus) Complete(_ []string) error {
 	var err error
-	n.cfg, err = bootstrapConfig(n.cmd.Context(), n.appCtx, n.runCtx)
+	n.cfg, err = n.runCtx.GetConfig(n.cmd.Context())
 	return err
 }
 

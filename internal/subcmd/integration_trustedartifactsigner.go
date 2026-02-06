@@ -35,7 +35,7 @@ func (t *IntegrationTrustedArtifactSigner) Cmd() *cobra.Command {
 // Complete is a no-op in this case.
 func (t *IntegrationTrustedArtifactSigner) Complete(_ []string) error {
 	var err error
-	t.cfg, err = bootstrapConfig(t.cmd.Context(), t.appCtx, t.runCtx)
+	t.cfg, err = t.runCtx.GetConfig(t.cmd.Context())
 	return err
 }
 

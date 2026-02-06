@@ -47,7 +47,7 @@ func (g *IntegrationGitHub) Cmd() *cobra.Command {
 // Complete captures the application name, and ensures it's ready to run.
 func (g *IntegrationGitHub) Complete(args []string) error {
 	var err error
-	g.cfg, err = bootstrapConfig(g.cmd.Context(), g.appCtx, g.runCtx)
+	g.cfg, err = g.runCtx.GetConfig(g.cmd.Context())
 	if err != nil {
 		return err
 	}

@@ -37,7 +37,7 @@ func (b *IntegrationBitBucket) Cmd() *cobra.Command {
 // Complete is a no-op in this case.
 func (b *IntegrationBitBucket) Complete(_ []string) error {
 	var err error
-	b.cfg, err = bootstrapConfig(b.cmd.Context(), b.appCtx, b.runCtx)
+	b.cfg, err = b.runCtx.GetConfig(b.cmd.Context())
 	return err
 }
 

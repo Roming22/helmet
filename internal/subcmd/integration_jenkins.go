@@ -37,7 +37,7 @@ func (j *IntegrationJenkins) Cmd() *cobra.Command {
 // Complete is a no-op in this case.
 func (j *IntegrationJenkins) Complete(_ []string) error {
 	var err error
-	j.cfg, err = bootstrapConfig(j.cmd.Context(), j.appCtx, j.runCtx)
+	j.cfg, err = j.runCtx.GetConfig(j.cmd.Context())
 	return err
 }
 

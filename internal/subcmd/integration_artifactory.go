@@ -37,7 +37,7 @@ func (a *IntegrationArtifactory) Cmd() *cobra.Command {
 // Complete is a no-op in this case.
 func (a *IntegrationArtifactory) Complete(_ []string) error {
 	var err error
-	a.cfg, err = bootstrapConfig(a.cmd.Context(), a.appCtx, a.runCtx)
+	a.cfg, err = a.runCtx.GetConfig(a.cmd.Context())
 	return err
 }
 

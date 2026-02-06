@@ -37,7 +37,7 @@ func (a *IntegrationACS) Cmd() *cobra.Command {
 // Complete loads the configuration from cluster.
 func (a *IntegrationACS) Complete(_ []string) error {
 	var err error
-	a.cfg, err = bootstrapConfig(a.cmd.Context(), a.appCtx, a.runCtx)
+	a.cfg, err = a.runCtx.GetConfig(a.cmd.Context())
 	return err
 }
 

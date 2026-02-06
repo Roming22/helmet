@@ -20,7 +20,7 @@ func NewIntegration(
 		Short: "Configures an external service provider for TSSC",
 		PersistentPostRunE: func(cmd *cobra.Command, _ []string) error {
 			ctx := cmd.Context()
-			cfg, err := bootstrapConfig(ctx, appCtx, runCtx)
+			cfg, err := runCtx.GetConfig(ctx)
 			if err != nil {
 				return err
 			}

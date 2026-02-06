@@ -37,7 +37,7 @@ func (g *IntegrationGitLab) Cmd() *cobra.Command {
 // Complete is a no-op in this case.
 func (g *IntegrationGitLab) Complete(_ []string) error {
 	var err error
-	g.cfg, err = bootstrapConfig(g.cmd.Context(), g.appCtx, g.runCtx)
+	g.cfg, err = g.runCtx.GetConfig(g.cmd.Context())
 	return err
 }
 

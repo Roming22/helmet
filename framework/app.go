@@ -73,7 +73,7 @@ func (a *App) setupRootCmd() error {
 	}
 
 	logger := a.flags.GetLogger(os.Stdout)
-	runCtx := runcontext.NewRunContext(a.kube, a.ChartFS, logger)
+	runCtx := runcontext.NewRunContext(a.AppCtx.Name, a.kube, a.ChartFS, logger)
 
 	// Loading informed integrations into the manager.
 	a.integrationManager = integrations.NewManager()

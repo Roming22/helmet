@@ -51,7 +51,7 @@ func (t *Topology) Complete(_ []string) error {
 	if t.collection, err = resolver.NewCollection(t.appCtx, charts); err != nil {
 		return err
 	}
-	if t.cfg, err = bootstrapConfig(t.cmd.Context(), t.appCtx, t.runCtx); err != nil {
+	if t.cfg, err = t.runCtx.GetConfig(t.cmd.Context()); err != nil {
 		return err
 	}
 	return nil

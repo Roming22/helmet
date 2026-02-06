@@ -80,7 +80,7 @@ func (t *Template) Complete(args []string) error {
 	}
 	t.dep = *resolver.NewDependencyWithNamespace(hc, t.namespace)
 
-	if t.cfg, err = bootstrapConfig(t.cmd.Context(), t.appCtx, t.runCtx); err != nil {
+	if t.cfg, err = t.runCtx.GetConfig(t.cmd.Context()); err != nil {
 		return err
 	}
 	return nil

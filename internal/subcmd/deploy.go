@@ -79,7 +79,7 @@ func (d *Deploy) Complete(args []string) error {
 	if err != nil {
 		return err
 	}
-	d.cfg, err = bootstrapConfig(d.cmd.Context(), d.appCtx, d.runCtx)
+	d.cfg, err = d.runCtx.GetConfig(d.cmd.Context())
 	if err != nil {
 		return err
 	}
