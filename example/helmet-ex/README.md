@@ -19,39 +19,48 @@ The `helmet-ex` application showcases:
 ### Prerequisites
 
 - Go 1.21 or higher
-- GNU tar
-- GNU make
+- GNU tar (`gtar` on macOS)
 - Git
 
 ### Building
 
-```bash
-# Build with default version
-make build
+The `--dereference` flag is required because `installer/charts` is a symlink to
+the framework's stub Helm charts directory.
 
-# View all targets
-make help
+```bash
+tar cvpf installer/installer.tar \
+    --dereference \
+    --exclude="*.go" \
+    --exclude="installer.tar" \
+    installer
+
+go build .
 ```
 
-The build process:
-1. Creates an uncompressed tarball from the `installer` directory
-2. Embeds the tarball and instructions.md into the binary
-3. Injects version and commit ID via ldflags
+For the MCP server interface, version and commit ID (revision) must be injected at build time via ldflags:
+
+```bash
+COMMIT_ID="$(git rev-parse --short HEAD)"
+
+go build \
+    -ldflags "-X main.version=v1.0.0 -X main.commitID=${COMMIT_ID}" \
+    .
+```
 
 ### Running
 
 ```bash
 # Show help
-./bin/helmet-ex --help
+./helmet-ex --help
 
 # Show version
-./bin/helmet-ex --version
+./helmet-ex --version
 
 # List embedded installer resources
-./bin/helmet-ex installer --list
+./helmet-ex installer --list
 
 # Extract installer resources
-./bin/helmet-ex installer --extract /path/to/directory
+./helmet-ex installer --extract /path/to/directory
 ```
 
 ## Command Reference
@@ -60,43 +69,43 @@ The build process:
 
 ```bash
 # Create initial configuration (requires Kubernetes cluster)
-./bin/helmet-ex config --create
+./helmet-ex config --create
 
 # View current configuration
-./bin/helmet-ex config --get
+./helmet-ex config --get
 
 # Delete configuration
-./bin/helmet-ex config --delete
+./helmet-ex config --delete
 ```
 
 ### Topology Inspection
 
 ```bash
 # View dependency graph
-./bin/helmet-ex topology
+./helmet-ex topology
 ```
 
 ### Deployment
 
 ```bash
 # Deploy with dry-run
-./bin/helmet-ex deploy --dry-run
+./helmet-ex deploy --dry-run
 
 # Deploy to cluster
-./bin/helmet-ex deploy
+./helmet-ex deploy
 
 # Deploy with debug logging
-./bin/helmet-ex deploy --log-level=debug
+./helmet-ex deploy --log-level=debug
 ```
 
 ### Integration Configuration
 
 ```bash
 # List available integrations
-./bin/helmet-ex integration --help
+./helmet-ex integration --help
 
 # Get help on a specific integration
-./bin/helmet-ex integration acs --help
+./helmet-ex integration acs --help
 ```
 
 All integrations:
@@ -116,10 +125,10 @@ All integrations:
 
 ```bash
 # Start MCP server (STDIO mode)
-./bin/helmet-ex mcp-server
+./helmet-ex mcp-server
 
 # Start with custom image
-./bin/helmet-ex mcp-server --image quay.io/myorg/myimage:v1.0.0
+./helmet-ex mcp-server --image quay.io/myorg/myimage:v1.0.0
 ```
 
 The MCP server provides AI assistants with tools for:
@@ -132,7 +141,7 @@ The MCP server provides AI assistants with tools for:
 
 ```bash
 # Render Helm chart templates
-./bin/helmet-ex template [chart-name]
+./helmet-ex template [chart-name]
 ```
 
 ## Architecture
@@ -174,7 +183,7 @@ ofs := chartfs.NewOverlayFS(tfs, os.DirFS(cwd))
 ```
 
 This enables:
-1. Extract installer resources: `./bin/helmet-ex installer --extract ./dev`
+1. Extract installer resources: `./helmet-ex installer --extract ./dev`
 2. Modify files in `./dev/`
 3. Run from `./dev/` directory - changes take effect immediately
 4. No binary rebuild required
@@ -204,32 +213,11 @@ Product Layer
 └── Product D (depends on: Product C, integrations)
 ```
 
-## Build Variables
-
-Override build-time variables:
-
-```bash
-# Custom version
-make build VERSION=v1.0.0
-
-# Custom commit ID
-make build COMMIT_ID=abc123
-
-# Both
-make build VERSION=v2.0.0 COMMIT_ID=def456
-```
-
-Injected via ldflags:
-- `main.version` - Application version (default: v0.0.0-SNAPSHOT)
-- `main.commitID` - Git commit ID (default: git rev-parse --short HEAD)
-
 ## Project Structure
 
 ```
 helmet-ex/
-├── cmd/
-│   └── helmet-ex/
-│       └── main.go           # Application entry point
+├── main.go                   # Application entry point
 ├── installer/
 │   ├── charts/               # Folder with the installer's Helm charts
 │   ├── config.yaml           # Default installer configuration
@@ -237,9 +225,7 @@ helmet-ex/
 │   ├── installer.tar         # Generated tarball (git-ignored)
 │   ├── instructions.md       # MCP server guidance
 │   └── values.yaml.tpl       # Template file rendered as `values.yaml` and passed to Helm at deployment time
-├── .gitignore                # Git ignore rules
 ├── go.mod                    # Go module (uses replace directive)
-├── Makefile                  # Build automation
 └── README.md                 # This file
 ```
 
@@ -251,19 +237,19 @@ This is expected when running topology or deploy commands without cluster config
 
 **Solution:** Create configuration first:
 ```bash
-./bin/helmet-ex config --create
+./helmet-ex config --create
 ```
 
 ### MCP Server Not Responding
 
 Ensure STDIO mode is used (default behavior):
 ```bash
-./bin/helmet-ex mcp-server
+./helmet-ex mcp-server
 ```
 
 For debugging, check that instructions.md is embedded:
 ```bash
-./bin/helmet-ex installer --list | grep instructions.md
+./helmet-ex installer --list | grep instructions.md
 ```
 
 ## References
