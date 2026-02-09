@@ -1,15 +1,35 @@
+# Debug artifacts
 /__debug*
+
+# AI/IDE configuration
 /.claude
 /.gemini
-/.vscode
-/*.dll
-/*.dylib
-/*.exe
-/*.exe~
-/*.out
-/*.so
-/*.test
+.idea/
+.vscode/
+
+# Editor swap files
+*.swp
+*.swo
+*~
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Go build artifacts
+*.dll
+*.dylib
+*.exe
+*.exe~
+*.out
+*.so
+*.test
+
+# Project build artifacts
 /bin
+/example/helmet-ex/helmet-ex
 /hack/config/
-/installer/*.tar
 /tmp
+
+# Installer tarball (generated at build time)
+**/installer/*.tar

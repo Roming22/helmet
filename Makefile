@@ -1,5 +1,3 @@
-APP = helmet
-
 # Primary source code directories.
 PKG ?= ./api/... ./framework/... ./internal/...
 
@@ -7,8 +5,33 @@ PKG ?= ./api/... ./framework/... ./internal/...
 GOFLAGS ?= -v
 GOFLAGS_TEST ?= -failfast -v -cover
 CGO_ENABLED ?= 0
-CGO_LDFLAGS ?= 
+CGO_LDFLAGS ?=
 
+# Build variables.
+VERSION ?= v0.0.0-SNAPSHOT
+COMMIT_ID ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+
+# Example application paths.
+EXAMPLE_APP ?= helmet-ex
+EXAMPLE_DIR ?= example/$(EXAMPLE_APP)
+EXAMPLE_BIN ?= $(EXAMPLE_DIR)/$(EXAMPLE_APP)
+
+# Installer tarball using "find" to list the included paths.
+INSTALLER_DIR = $(EXAMPLE_DIR)/installer
+INSTALLER_TARBALL = $(INSTALLER_DIR)/installer.tar
+INSTALLER_TARBALL_DATA = $(shell find -L $(INSTALLER_DIR) -type f \
+    ! -path "$(INSTALLER_TARBALL)" \
+    ! -name embed.go \
+    | sort \
+)
+
+# Determine the appropriate tar command based on the operating system.
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+    TAR := gtar
+else
+    TAR := tar
+endif
 
 # GitHub action current ref name, provided by the action context environment
 # variables, and credentials needed to push the release.
@@ -17,18 +40,49 @@ GITHUB_TOKEN ?= ${GITHUB_TOKEN:-}
 
 .EXPORT_ALL_VARIABLES:
 
-.default: build
-
-include example/helmet-ex/Makefile
+.DEFAULT_GOAL := build
 
 #
 # Build
 #
 
-# Build the application
+# Build the example application.
 .PHONY: build
-build:
-	go build $(GOFLAGS) ./...
+build: $(EXAMPLE_BIN)
+$(EXAMPLE_BIN): installer-tarball
+$(EXAMPLE_BIN):
+	go build $(GOFLAGS) \
+		-ldflags "-X main.version=$(VERSION) -X main.commitID=$(COMMIT_ID)" \
+		-o $(EXAMPLE_BIN) ./$(EXAMPLE_DIR)
+
+#
+# Example Application
+#
+
+# Removes build artifacts.
+.PHONY: clean
+clean:
+	rm -fv "$(EXAMPLE_BIN)" "$(INSTALLER_TARBALL)" || true
+
+# Generates the installer tarball.
+.PHONY: installer-tarball
+installer-tarball: $(INSTALLER_TARBALL)
+$(INSTALLER_TARBALL): $(INSTALLER_TARBALL_DATA)
+	@echo "# Generating '$(INSTALLER_TARBALL)'"
+	@test -f "$(INSTALLER_TARBALL)" && rm -f "$(INSTALLER_TARBALL)" || true
+	$(TAR) \
+		--create \
+		--dereference \
+		--directory "$(INSTALLER_DIR)" \
+		--file "$(INSTALLER_TARBALL)" \
+		--preserve-permissions \
+		$(shell echo "$(INSTALLER_TARBALL_DATA)" \
+			| sed "s:$(INSTALLER_DIR)/:./:g")
+
+# Builds and runs the example application.
+.PHONY: run
+run: build
+	$(EXAMPLE_BIN) $(ARGS)
 
 #
 # Tools
@@ -70,7 +124,7 @@ test-unit:
 
 # Uses golangci-lint to inspect the code base.
 .PHONY: lint
-lint: build
+lint: installer-tarball
 	go tool golangci-lint run ./...
 
 #
@@ -166,18 +220,21 @@ kind-status:
 #
 # Show help
 #
+
 .PHONY: help
-help: example-help
-	@echo ""
+help:
 	@echo "Targets:"
-	@echo "  build                   - Build the package (default)"
-	@echo "  github-release-create   - Create GitHub release (requires 'gh' in PATH)"
-	@echo "  goreleaser-snapshot     - Build release assets for current platform"
-	@echo "  goreleaser-release      - Create full release (CI only)"
-	@echo "  lint                    - Run linting (includes gosec)"
-	@echo "  security                - Run govulncheck vulnerability scan"
-	@echo "  test                    - Run tests"
-	@echo "  kind-up                 - Create KinD cluster"
-	@echo "  kind-down               - Delete the KinD cluster"
-	@echo "  kind-status             - Show KinD cluster status"
-	@echo "  help                    - Show help"
+	@echo "  build                    - Build library and example binary (default)"
+	@echo "  clean                    - Remove build artifacts"
+	@echo "  installer-tarball        - Generate installer tarball"
+	@echo "  run                      - Build and run example (use ARGS='...')"
+	@echo "  test                     - Run tests"
+	@echo "  lint                     - Run linting"
+	@echo "  security                 - Run govulncheck vulnerability scan"
+	@echo "  github-release-create    - Create GitHub release (requires 'gh')"
+	@echo "  goreleaser-snapshot      - Build release assets for current platform"
+	@echo "  goreleaser-release       - Create full release (CI only)"
+	@echo "  kind-up                  - Create KinD cluster"
+	@echo "  kind-down                - Delete the KinD cluster"
+	@echo "  kind-status              - Show KinD cluster status"
+	@echo "  help                     - Show this help"
