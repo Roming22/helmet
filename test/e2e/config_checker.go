@@ -59,7 +59,7 @@ func (c *ConfigChecker) Check(ctx context.Context) Result {
 	}
 
 	// Look for products in the configuration structure. The config is nested
-	// under the app name key (e.g., "tssc").
+	// under the app name key (e.g., "helmet_ex").
 	for _, top := range parsed {
 		topMap, ok := top.(map[string]any)
 		if !ok {

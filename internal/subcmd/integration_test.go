@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	testAppName   = "test-app"
+	testAppName   = "helmet-ex"
 	testNamespace = "test-ns"
 )
 
@@ -36,7 +36,7 @@ func loadTestConfig(t *testing.T) *config.Config {
 	g := gomega.NewWithT(t)
 	payload, err := os.ReadFile("../../test/config.yaml")
 	g.Expect(err).ToNot(gomega.HaveOccurred())
-	cfg, err := config.NewConfigFromBytes(payload, testNamespace)
+	cfg, err := config.NewConfigFromBytes(payload, testNamespace, "helmet_ex")
 	g.Expect(err).ToNot(gomega.HaveOccurred())
 	return cfg
 }

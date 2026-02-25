@@ -28,7 +28,7 @@ func TestConfigChecker_Check(t *testing.T) {
 				},
 			},
 			Data: map[string]string{
-				constants.ConfigFilename: `tssc:
+				constants.ConfigFilename: `helmet_ex:
   products:
     - name: Product A
       enabled: true`,
@@ -121,7 +121,7 @@ func TestConfigChecker_Check(t *testing.T) {
 				},
 			},
 			Data: map[string]string{
-				constants.ConfigFilename: `tssc:
+				constants.ConfigFilename: `helmet_ex:
   products: []`,
 			},
 		}

@@ -18,7 +18,7 @@ func TestNewCollection(t *testing.T) {
 	charts, err := cfs.GetAllCharts()
 	g.Expect(err).To(o.Succeed())
 
-	appCtx := api.NewAppContext("tssc")
+	appCtx := api.NewAppContext("helmet-ex")
 	c, err := NewCollection(appCtx, charts)
 	g.Expect(err).To(o.Succeed())
 	g.Expect(c).NotTo(o.BeNil())

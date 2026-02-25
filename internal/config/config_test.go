@@ -14,7 +14,8 @@ func TestNewConfigFromFile(t *testing.T) {
 
 	cfs := chartfs.New(os.DirFS("../../test"))
 
-	cfg, err := NewConfigFromFile(cfs, "config.yaml", "test-namespace")
+	cfg, err := NewConfigFromFile(
+		cfs, "config.yaml", "test-namespace", "helmet_ex")
 	g.Expect(err).To(o.Succeed())
 	g.Expect(cfg).NotTo(o.BeNil())
 	g.Expect(cfg.Installer).NotTo(o.BeNil())
@@ -43,7 +44,7 @@ func TestNewConfigFromFile(t *testing.T) {
 	t.Run("MarshalYAML and UnmarshalYAML", func(t *testing.T) {
 		payload, err := cfg.MarshalYAML()
 		g.Expect(err).To(o.Succeed())
-		g.Expect(string(payload)).To(o.ContainSubstring("tssc:"))
+		g.Expect(string(payload)).To(o.ContainSubstring("helmet_ex:"))
 
 		err = cfg.UnmarshalYAML(payload)
 		g.Expect(err).To(o.Succeed())
@@ -61,7 +62,7 @@ func TestNewConfigFromFile(t *testing.T) {
 
 		configString := cfg.String()
 		g.Expect(err).To(o.Succeed())
-		g.Expect(configString).To(o.ContainSubstring("tssc:"))
+		g.Expect(configString).To(o.ContainSubstring("helmet_ex:"))
 
 		// Asserting the original configuration looks like the marshaled one.
 		g.Expect(string(original)).To(o.Equal(configString))
@@ -74,7 +75,7 @@ func TestNewConfigFromFile(t *testing.T) {
 				"debug": true,
 			},
 		}
-		err := cfg.Set("tssc.settings", data)
+		err := cfg.Set("helmet_ex.settings", data)
 		g.Expect(err).To(o.Succeed())
 		configString := cfg.String()
 		g.Expect(configString).To(o.ContainSubstring("crc: true"))
@@ -83,11 +84,11 @@ func TestNewConfigFromFile(t *testing.T) {
 
 	t.Run("SetProducts", func(t *testing.T) {
 		// Product A is product 0
-		err := cfg.Set("tssc.products.0.namespace", "productAtest")
+		err := cfg.Set("helmet_ex.products.0.namespace", "productAtest")
 		g.Expect(err).To(o.Succeed())
 
 		// Product 2
-		err = cfg.Set("tssc.products.2.enabled", false)
+		err = cfg.Set("helmet_ex.products.2.enabled", false)
 		g.Expect(err).To(o.Succeed())
 
 		// Product D is product 3
@@ -95,7 +96,7 @@ func TestNewConfigFromFile(t *testing.T) {
 			"catalogURL":   "https://someIP.io",
 			"authProvider": "gitlab",
 		}
-		err = cfg.Set("tssc.products.3.properties", dData)
+		err = cfg.Set("helmet_ex.products.3.properties", dData)
 		g.Expect(err).To(o.Succeed())
 
 		configString := cfg.String()

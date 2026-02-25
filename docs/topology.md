@@ -169,7 +169,7 @@ From [`helmet-ex/installer/config.yaml`](../example/helmet-ex/installer/config.y
 
 ```yaml
 # config.yaml
-tssc:
+<app_name>:
   products:
     - name: Product A
       namespace: helmet-product-a

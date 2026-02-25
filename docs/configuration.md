@@ -12,7 +12,7 @@ The configuration file uses a top-level key (matching the installer name) contai
 
 ```yaml
 ---
-tssc:
+<app_name>:
   settings:
     crc: false
     ci:
@@ -37,6 +37,8 @@ tssc:
         manageSubscription: true
         authProvider: oidc
 ```
+
+> **Note**: The top-level key `<app_name>` is derived from `AppContext.IdentifierName()` — the application name with hyphens replaced by underscores (e.g., `helmet-ex` becomes `helmet_ex`).
 
 ### Settings Section
 
@@ -97,7 +99,7 @@ metadata:
 data:
   config.yaml: |
     ---
-    tssc:
+    <app_name>:
       settings: ...
       products: ...
 ```
@@ -226,13 +228,13 @@ Each installer embeds a default `config.yaml` at the root of its chart filesyste
 
 ```go
 // Load embedded default
-cfg, err := config.NewConfigDefault(chartFS, namespace)
+cfg, err := config.NewConfigDefault(chartFS, namespace, appName)
 
 // Load from file
-cfg, err := config.NewConfigFromFile(chartFS, "config.yaml", namespace)
+cfg, err := config.NewConfigFromFile(chartFS, "config.yaml", namespace, appName)
 
 // Load from bytes (e.g., from cluster)
-cfg, err := config.NewConfigFromBytes(payload, namespace)
+cfg, err := config.NewConfigFromBytes(payload, namespace, appName)
 ```
 
 The `ApplyDefaults()` method propagates the installer namespace to products without explicit `namespace` fields. This is called automatically during unmarshaling.

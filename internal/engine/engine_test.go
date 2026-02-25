@@ -32,7 +32,8 @@ func TestEngine_Render(t *testing.T) {
 
 	cfs := chartfs.New(os.DirFS("../../test"))
 
-	cfg, err := config.NewConfigFromFile(cfs, "config.yaml", "test-namespace")
+	cfg, err := config.NewConfigFromFile(
+		cfs, "config.yaml", "test-namespace", "helmet_ex")
 	g.Expect(err).To(o.Succeed())
 
 	variables := NewVariables()

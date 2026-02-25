@@ -22,11 +22,18 @@ func configYAMLProducts(data string) map[string]map[string]any {
 	var raw map[string]any
 	Expect(yaml.Unmarshal([]byte(data), &raw)).To(Succeed())
 
-	tssc, ok := raw["tssc"].(map[string]any)
-	Expect(ok).To(BeTrue(), "missing tssc top-level key")
+	// Find the top-level app key dynamically (e.g., "helmet_ex").
+	var appSection map[string]any
+	for _, v := range raw {
+		if m, ok := v.(map[string]any); ok {
+			appSection = m
+			break
+		}
+	}
+	Expect(appSection).NotTo(BeNil(), "missing app top-level key")
 
-	productsList, ok := tssc["products"].([]any)
-	Expect(ok).To(BeTrue(), "missing tssc.products list")
+	productsList, ok := appSection["products"].([]any)
+	Expect(ok).To(BeTrue(), "missing products list")
 
 	products := make(map[string]map[string]any, len(productsList))
 	for _, p := range productsList {

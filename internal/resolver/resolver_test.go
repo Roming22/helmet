@@ -31,13 +31,14 @@ func TestNewResolver(t *testing.T) {
 	cfs := chartfs.New(os.DirFS("../../test"))
 
 	installerNamespace := "test-namespace"
-	cfg, err := config.NewConfigFromFile(cfs, "config.yaml", installerNamespace)
+	cfg, err := config.NewConfigFromFile(
+		cfs, "config.yaml", installerNamespace, "helmet_ex")
 	g.Expect(err).To(o.Succeed())
 
 	charts, err := cfs.GetAllCharts()
 	g.Expect(err).To(o.Succeed())
 
-	appCtx := api.NewAppContext("tssc")
+	appCtx := api.NewAppContext("helmet-ex")
 	c, err := NewCollection(appCtx, charts)
 	g.Expect(err).To(o.Succeed())
 

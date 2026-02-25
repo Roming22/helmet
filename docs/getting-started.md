@@ -50,7 +50,7 @@ Defines settings and products. From [`helmet-ex/installer/config.yaml`](../examp
 
 ```yaml
 ---
-tssc:
+<app_name>:
   settings:
     crc: false
     ci:
@@ -61,7 +61,7 @@ tssc:
       namespace: helmet-product-a
 ```
 
-The top-level key (`tssc`) must match across your configuration. See [configuration.md](configuration.md) for the full schema.
+The top-level key (e.g., `helmet_ex`) is derived from `AppContext.IdentifierName()` and must match the application name with hyphens replaced by underscores. See [configuration.md](configuration.md) for the full schema.
 
 ### Values Template: `installer/values.yaml.tpl`
 

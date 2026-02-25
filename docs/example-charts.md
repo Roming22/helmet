@@ -166,7 +166,7 @@ This chart demonstrates cross-product integration consumption without direct pro
 Products are controlled via `test/config.yaml`:
 
 ```yaml
-tssc:
+<app_name>:
   products:
     - name: Product C
       enabled: true

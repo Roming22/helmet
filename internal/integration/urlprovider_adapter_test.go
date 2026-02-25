@@ -94,13 +94,13 @@ func Test_urlProviderAdapter_GetProductNamespace(t *testing.T) {
 	const wantNamespace = "test-product-ns"
 
 	cfg, err := config.NewConfigFromBytes([]byte(`
-tssc:
+helmet_ex:
   settings: {}
   products:
     - name: "`+productName+`"
       enabled: true
       namespace: "`+wantNamespace+`"
-`), "installer-ns")
+`), "installer-ns", "helmet_ex")
 	if err != nil {
 		t.Fatalf("build config: %v", err)
 	}
@@ -119,13 +119,13 @@ tssc:
 func Test_urlProviderAdapter_GetProductNamespace_notFound(t *testing.T) {
 	t.Parallel()
 	cfg, err := config.NewConfigFromBytes([]byte(`
-tssc:
+helmet_ex:
   settings: {}
   products:
     - name: "Only Product"
       enabled: true
       namespace: "only-ns"
-`), "installer-ns")
+`), "installer-ns", "helmet_ex")
 	if err != nil {
 		t.Fatalf("build config: %v", err)
 	}
