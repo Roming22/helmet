@@ -616,7 +616,7 @@ github.com/butuzov/ireturn/analyzer/internal/types
 ## explicit; go 1.19
 github.com/butuzov/mirror
 github.com/butuzov/mirror/internal/checker
-# github.com/caarlos0/env/v11 v11.3.1
+# github.com/caarlos0/env/v11 v11.4.0
 ## explicit; go 1.18
 github.com/caarlos0/env/v11
 # github.com/caarlos0/go-reddit/v3 v3.0.1

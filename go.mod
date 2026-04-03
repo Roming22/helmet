@@ -150,7 +150,7 @@ require (
 	github.com/buger/jsonparser v1.1.2 // indirect
 	github.com/butuzov/ireturn v0.4.1 // indirect
 	github.com/butuzov/mirror v1.3.0 // indirect
-	github.com/caarlos0/env/v11 v11.3.1 // indirect
+	github.com/caarlos0/env/v11 v11.4.0 // indirect
 	github.com/caarlos0/go-reddit/v3 v3.0.1 // indirect
 	github.com/caarlos0/go-shellwords v1.0.12 // indirect
 	github.com/caarlos0/go-version v0.2.2 // indirect
