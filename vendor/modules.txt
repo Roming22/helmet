@@ -2096,12 +2096,15 @@ github.com/moby/spdystream/spdy
 ## explicit; go 1.18
 github.com/moby/term
 github.com/moby/term/windows
-# github.com/modelcontextprotocol/registry v1.4.0
-## explicit; go 1.24.11
+# github.com/modelcontextprotocol/registry v1.5.0
+## explicit; go 1.25.8
 github.com/modelcontextprotocol/registry/cmd/publisher/auth
 github.com/modelcontextprotocol/registry/cmd/publisher/auth/azurekeyvault
 github.com/modelcontextprotocol/registry/cmd/publisher/auth/googlekms
 github.com/modelcontextprotocol/registry/cmd/publisher/commands
+github.com/modelcontextprotocol/registry/internal/config
+github.com/modelcontextprotocol/registry/internal/validators
+github.com/modelcontextprotocol/registry/internal/validators/registries
 github.com/modelcontextprotocol/registry/pkg/api/v0
 github.com/modelcontextprotocol/registry/pkg/model
 # github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd
@@ -2403,6 +2406,9 @@ github.com/sagikazarmark/locafero/internal/queue
 # github.com/sanposhiho/wastedassign/v2 v2.1.0
 ## explicit; go 1.18
 github.com/sanposhiho/wastedassign/v2
+# github.com/santhosh-tekuri/jsonschema/v5 v5.3.1
+## explicit; go 1.19
+github.com/santhosh-tekuri/jsonschema/v5
 # github.com/santhosh-tekuri/jsonschema/v6 v6.0.2
 ## explicit; go 1.21
 github.com/santhosh-tekuri/jsonschema/v6
