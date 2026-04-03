@@ -604,7 +604,7 @@ github.com/breml/bidichk/pkg/bidichk
 # github.com/breml/errchkjson v0.4.1
 ## explicit; go 1.23.0
 github.com/breml/errchkjson
-# github.com/buger/jsonparser v1.1.1
+# github.com/buger/jsonparser v1.1.2
 ## explicit; go 1.13
 github.com/buger/jsonparser
 # github.com/butuzov/ireturn v0.4.0
