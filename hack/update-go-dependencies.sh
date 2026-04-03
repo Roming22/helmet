@@ -112,6 +112,7 @@ update_dependency() {
     run go mod vendor
     if ! run make lint; then
         echo "[ERROR] \`make lint\` failed"
+        set -x
         cleanup
         return
     fi
