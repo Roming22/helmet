@@ -335,7 +335,7 @@ github.com/PuerkitoBio/goquery
 # github.com/agnivade/levenshtein v1.2.1
 ## explicit; go 1.21
 github.com/agnivade/levenshtein
-# github.com/alecthomas/chroma/v2 v2.21.1
+# github.com/alecthomas/chroma/v2 v2.23.1
 ## explicit; go 1.22
 github.com/alecthomas/chroma/v2
 github.com/alecthomas/chroma/v2/formatters
