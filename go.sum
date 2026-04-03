@@ -310,8 +310,8 @@ github.com/caarlos0/go-shellwords v1.0.12 h1:HWrUnu6lGbWfrDcFiHcZiwOLzHWjjrPVehU
 github.com/caarlos0/go-shellwords v1.0.12/go.mod h1:bYeeX1GrTLPl5cAMYEzdm272qdsQAZiaHgeF0KTk1Gw=
 github.com/caarlos0/go-version v0.2.2 h1:5r+nlrg4H2wOVwWjqRqRRIRbZ7ytRmjC9xoMIP0a5kQ=
 github.com/caarlos0/go-version v0.2.2/go.mod h1:X+rI5VAtJDpcjCjeEIXpxGa5+rTcgur1FK66wS0/944=
-github.com/caarlos0/log v0.5.4 h1:4DJwTt8MvvRF8BM4I3j2sbmdf4DYY0HVqKpg09cAgaU=
-github.com/caarlos0/log v0.5.4/go.mod h1:iAv3N3ZkiEQUmZ8fGdD8bMA4zq6jMSlnz9D87333Gi0=
+github.com/caarlos0/log v0.6.0 h1:iS+oZ7DB8wpJxOjA4+BHkZQtrx8sMu8AYNZVQukmEtw=
+github.com/caarlos0/log v0.6.0/go.mod h1:iAv3N3ZkiEQUmZ8fGdD8bMA4zq6jMSlnz9D87333Gi0=
 github.com/caarlos0/testfs v0.4.4 h1:3PHvzHi5Lt+g332CiShwS8ogTgS3HjrmzZxCm6JCDr8=
 github.com/caarlos0/testfs v0.4.4/go.mod h1:bRN55zgG4XCUVVHZCeU+/Tz1Q6AxEJOEJTliBy+1DMk=
 github.com/catenacyber/perfsprint v0.10.1 h1:u7Riei30bk46XsG8nknMhKLXG9BcXz3+3tl/WpKm0PQ=

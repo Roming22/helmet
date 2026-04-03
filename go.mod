@@ -154,7 +154,7 @@ require (
 	github.com/caarlos0/go-reddit/v3 v3.0.1 // indirect
 	github.com/caarlos0/go-shellwords v1.0.12 // indirect
 	github.com/caarlos0/go-version v0.2.2 // indirect
-	github.com/caarlos0/log v0.5.4 // indirect
+	github.com/caarlos0/log v0.6.0 // indirect
 	github.com/catenacyber/perfsprint v0.10.1 // indirect
 	github.com/cavaliergopher/cpio v1.0.1 // indirect
 	github.com/ccojocar/zxcvbn-go v1.0.4 // indirect
