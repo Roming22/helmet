@@ -198,7 +198,7 @@ require (
 	github.com/denis-tingaikin/go-header v0.5.0 // indirect
 	github.com/dghubble/go-twitter v0.0.0-20221104224141-912508c3888b // indirect
 	github.com/dghubble/oauth1 v0.7.3 // indirect
-	github.com/dghubble/sling v1.4.0 // indirect
+	github.com/dghubble/sling v1.4.2 // indirect
 	github.com/digitorus/pkcs7 v0.0.0-20250730155240-ffadbf3f398c // indirect
 	github.com/digitorus/timestamp v0.0.0-20250524132541-c45532741eea // indirect
 	github.com/dimchansky/utfbom v1.1.1 // indirect

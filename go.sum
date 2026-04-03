@@ -419,8 +419,8 @@ github.com/dghubble/go-twitter v0.0.0-20221104224141-912508c3888b h1:XQu6o3AwJx/
 github.com/dghubble/go-twitter v0.0.0-20221104224141-912508c3888b/go.mod h1:B0/qdW5XUupJvcsx40hnVbfjzz9He5YpYXx6eVVdiSY=
 github.com/dghubble/oauth1 v0.7.3 h1:EkEM/zMDMp3zOsX2DC/ZQ2vnEX3ELK0/l9kb+vs4ptE=
 github.com/dghubble/oauth1 v0.7.3/go.mod h1:oxTe+az9NSMIucDPDCCtzJGsPhciJV33xocHfcR2sVY=
-github.com/dghubble/sling v1.4.0 h1:/n8MRosVTthvMbwlNZgLx579OGVjUOy3GNEv5BIqAWY=
-github.com/dghubble/sling v1.4.0/go.mod h1:0r40aNsU9EdDUVBNhfCstAtFgutjgJGYbO1oNzkMoM8=
+github.com/dghubble/sling v1.4.2 h1:vs1HIGBbSl2SEALyU+irpYFLZMfc49Fp+jYryFebQjM=
+github.com/dghubble/sling v1.4.2/go.mod h1:o0arCOz0HwfqYQJLrRtqunaWOn4X6jxE/6ORKRpVTD4=
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f h1:lO4WD4F/rVNCu3HqELle0jiPLLBs70cWOduZpkS1E78=
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f/go.mod h1:cuUVRXasLTGF7a8hSLbxyZXjz+1KgoB3wDUb6vlszIc=
 github.com/dgryski/trifles v0.0.0-20230903005119-f50d829f2e54 h1:SG7nF6SRlWhcT7cNTs5R6Hk4V2lcmLz2NsG2VnInyNo=
@@ -696,7 +696,6 @@ github.com/google/go-github/v75 v75.0.0 h1:k7q8Bvg+W5KxRl9Tjq16a9XEgVY1pwuiG5sIL
 github.com/google/go-github/v75 v75.0.0/go.mod h1:H3LUJEA1TCrzuUqtdAQniBNwuKiQIqdGKgBo1/M/uqI=
 github.com/google/go-github/v80 v80.0.0 h1:BTyk3QOHekrk5VF+jIGz1TNEsmeoQG9K/UWaaP+EWQs=
 github.com/google/go-github/v80 v80.0.0/go.mod h1:pRo4AIMdHW83HNMGfNysgSAv0vmu+/pkY8nZO9FT9Yo=
-github.com/google/go-querystring v1.1.0/go.mod h1:Kcdr2DB4koayq7X8pmAG4sNG59So17icRSOU623lUBU=
 github.com/google/go-querystring v1.2.0 h1:yhqkPbu2/OH+V9BfpCVPZkNmUXhb2gBxJArfhIxNtP0=
 github.com/google/go-querystring v1.2.0/go.mod h1:8IFJqpSRITyJ8QhQ13bmbeMBDfmeEJZD5A0egEOmkqU=
 github.com/google/go-replayers/grpcreplay v1.3.0 h1:1Keyy0m1sIpqstQmgz307zhiJ1pV4uIlFds5weTmxbo=
