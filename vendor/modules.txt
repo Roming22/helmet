@@ -2369,8 +2369,8 @@ github.com/quasilyte/regex/syntax
 # github.com/quasilyte/stdinfo v0.0.0-20220114132959-f7386bf02567
 ## explicit; go 1.17
 github.com/quasilyte/stdinfo
-# github.com/quay/claircore v1.5.48
-## explicit; go 1.24.0
+# github.com/quay/claircore v1.5.52
+## explicit; go 1.25.0
 github.com/quay/claircore/pkg/tarfs
 # github.com/raeperd/recvcheck v0.2.0
 ## explicit; go 1.22.0
