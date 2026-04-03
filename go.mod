@@ -9,7 +9,7 @@ require (
 	github.com/google/go-github/scrape v0.0.0-20251209012504-06ab3a273511
 	github.com/google/go-github/v75 v75.0.0
 	github.com/google/go-github/v80 v80.0.0
-	github.com/mark3labs/mcp-go v0.43.1
+	github.com/mark3labs/mcp-go v0.46.0
 	github.com/onsi/ginkgo/v2 v2.28.1
 	github.com/onsi/gomega v1.39.1
 	github.com/openshift/api v0.0.0-20251124165233-999c45c0835a
@@ -297,6 +297,7 @@ require (
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/go-containerregistry v0.21.3 // indirect
 	github.com/google/go-querystring v1.2.0 // indirect
+	github.com/google/jsonschema-go v0.4.2 // indirect
 	github.com/google/ko v0.18.1 // indirect
 	github.com/google/pprof v0.0.0-20260402051712-545e8a4df936 // indirect
 	github.com/google/rpmpack v0.7.1 // indirect
