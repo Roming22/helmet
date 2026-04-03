@@ -669,7 +669,7 @@ github.com/charithe/durationcheck
 # github.com/charmbracelet/colorprofile v0.4.3
 ## explicit; go 1.25.0
 github.com/charmbracelet/colorprofile
-# github.com/charmbracelet/fang v0.4.4
+# github.com/charmbracelet/fang v1.0.0
 ## explicit; go 1.24.2
 github.com/charmbracelet/fang
 # github.com/charmbracelet/lipgloss v1.1.0
@@ -686,8 +686,8 @@ github.com/charmbracelet/x/ansi/parser
 # github.com/charmbracelet/x/cellbuf v0.0.15
 ## explicit; go 1.24.2
 github.com/charmbracelet/x/cellbuf
-# github.com/charmbracelet/x/exp/charmtone v0.0.0-20250603201427-c31516f43444
-## explicit; go 1.23.0
+# github.com/charmbracelet/x/exp/charmtone v0.0.0-20260330094520-2dce04b6f8a4
+## explicit; go 1.24.0
 github.com/charmbracelet/x/exp/charmtone
 # github.com/charmbracelet/x/term v0.2.2
 ## explicit; go 1.24.0
@@ -2119,8 +2119,8 @@ github.com/muesli/mango
 # github.com/muesli/mango-cobra v1.3.0
 ## explicit; go 1.18
 github.com/muesli/mango-cobra
-# github.com/muesli/mango-pflag v0.1.0
-## explicit; go 1.17
+# github.com/muesli/mango-pflag v0.2.0
+## explicit; go 1.18
 github.com/muesli/mango-pflag
 # github.com/muesli/roff v0.1.0
 ## explicit; go 1.17
