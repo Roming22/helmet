@@ -363,7 +363,7 @@ github.com/alingse/asasalint
 ## explicit; go 1.22.0
 github.com/alingse/nilnesserr
 github.com/alingse/nilnesserr/internal/typeparams
-# github.com/anchore/go-macholibre v0.0.0-20250826193721-3cd206ca93aa
+# github.com/anchore/go-macholibre v0.0.0-20260402185605-cfb1b3effca2
 ## explicit; go 1.17
 github.com/anchore/go-macholibre
 # github.com/andybalholm/cascadia v1.3.3

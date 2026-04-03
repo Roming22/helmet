@@ -188,8 +188,8 @@ github.com/alingse/asasalint v0.0.11 h1:SFwnQXJ49Kx/1GghOFz1XGqHYKp21Kq1nHad/0WQ
 github.com/alingse/asasalint v0.0.11/go.mod h1:nCaoMhw7a9kSJObvQyVzNTPBDbNpdocqrSP7t/cW5+I=
 github.com/alingse/nilnesserr v0.2.0 h1:raLem5KG7EFVb4UIDAXgrv3N2JIaffeKNtcEXkEWd/w=
 github.com/alingse/nilnesserr v0.2.0/go.mod h1:1xJPrXonEtX7wyTq8Dytns5P2hNzoWymVUIaKm4HNFg=
-github.com/anchore/go-macholibre v0.0.0-20250826193721-3cd206ca93aa h1:KPEP8f3enFJeus3Wo51I+riVuCvlf4OEYl2B4IfycbQ=
-github.com/anchore/go-macholibre v0.0.0-20250826193721-3cd206ca93aa/go.mod h1:7YJA6tAfRm4SzIF93b32pR4xnbf8g2nJIeQnp+2vzzI=
+github.com/anchore/go-macholibre v0.0.0-20260402185605-cfb1b3effca2 h1:wRC9iZmID1yp0/DJg09QJH5+hEnu1MXy8UzkBRLhKo4=
+github.com/anchore/go-macholibre v0.0.0-20260402185605-cfb1b3effca2/go.mod h1:eu0gbwaZ+ocVFJLePdmPPDKU8MboV1MKsUCr36Ckd5s=
 github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883/go.mod h1:rCTlJbsFo29Kk6CurOXKm700vrz8f0KW0JNfpkRJY/8=
 github.com/andybalholm/cascadia v1.3.3 h1:AG2YHrzJIm4BZ19iwJ/DAua6Btl3IwJX+VI4kktS1LM=
 github.com/andybalholm/cascadia v1.3.3/go.mod h1:xNd9bqTn98Ln4DwST8/nG+H0yuB8Hmgu1YHNnWw0GeA=
