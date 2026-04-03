@@ -2518,8 +2518,8 @@ github.com/sigstore/sigstore-go/pkg/verify
 # github.com/sigstore/timestamp-authority/v2 v2.0.3
 ## explicit; go 1.25.0
 github.com/sigstore/timestamp-authority/v2/pkg/verification
-# github.com/sirupsen/logrus v1.9.3
-## explicit; go 1.13
+# github.com/sirupsen/logrus v1.9.4
+## explicit; go 1.17
 github.com/sirupsen/logrus
 # github.com/sivchari/containedctx v1.0.3
 ## explicit; go 1.17
