@@ -989,7 +989,7 @@ github.com/gabriel-vasile/mimetype/internal/json
 github.com/gabriel-vasile/mimetype/internal/magic
 github.com/gabriel-vasile/mimetype/internal/markup
 github.com/gabriel-vasile/mimetype/internal/scan
-# github.com/ghostiam/protogetter v0.3.18
+# github.com/ghostiam/protogetter v0.3.20
 ## explicit; go 1.24.0
 github.com/ghostiam/protogetter
 # github.com/github/smimesign v0.2.0
