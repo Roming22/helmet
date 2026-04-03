@@ -1,8 +1,6 @@
-# versioninfo [![GoDoc](https://godoc.org/github.com/carlmjohnson/versioninfo?status.svg)](https://godoc.org/github.com/carlmjohnson/versioninfo) [![Go Report Card](https://goreportcard.com/badge/github.com/carlmjohnson/versioninfo)](https://goreportcard.com/report/github.com/carlmjohnson/versioninfo)
+# versioninfo [![GoDoc](https://godoc.org/github.com/earthboundkid/versioninfo?status.svg)](https://godoc.org/github.com/earthboundkid/versioninfo/v2) [![Go Report Card](https://goreportcard.com/badge/github.com/earthboundkid/versioninfo/v2)](https://goreportcard.com/report/github.com/earthboundkid/versioninfo/v2)
 
-Importable package that parses `debug.ReadBuildInfo()` for inclusion in your Go application.
-
-Requires Go 1.18+ for Git revision information, but compatible with prior versions of Go.
+Importable package that parses `debug.ReadBuildInfo()` for inclusion in your Go application. Requires Go 1.18+.
 
 ## Examples
 
@@ -12,7 +10,7 @@ package main
 import (
     "fmt"
 
-    "github.com/carlmjohnson/versioninfo"
+    "github.com/earthboundkid/versioninfo/v2"
 )
 
 func main() {
@@ -31,7 +29,7 @@ package main
 import (
     "fmt"
 
-    "github.com/carlmjohnson/versioninfo"
+    "github.com/earthboundkid/versioninfo/v2"
 )
 
 func main() {
@@ -48,7 +46,7 @@ import (
     "flag"
     "fmt"
 
-    "github.com/carlmjohnson/versioninfo"
+    "github.com/earthboundkid/versioninfo/v2"
 )
 
 func main() {

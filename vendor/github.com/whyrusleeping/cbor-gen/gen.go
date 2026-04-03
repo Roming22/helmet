@@ -32,6 +32,9 @@ type Gen struct {
 	MaxArrayLength  int // Default: 8192 (MaxLength)
 	MaxByteLength   int // Default: 2<<20 (ByteArrayMaxLen)
 	MaxStringLength int // Default: 8192 (MaxLength)
+
+	// Write output file in order of type names
+	SortTypeNames bool
 }
 
 func (g Gen) maxArrayLength() int {
@@ -217,12 +220,30 @@ func (gti *GenTypeInfo) Imports() []Import {
 	return imports
 }
 
+func (gti *GenTypeInfo) MaxMapKeyLength() int {
+	var mlen int
+	for _, f := range gti.Fields {
+		if len(f.MapKey) > mlen {
+			mlen = len(f.MapKey)
+		}
+	}
+	return mlen
+}
+
 func nameIsExported(name string) bool {
 	return strings.ToUpper(name[0:1]) == name[0:1]
 }
 
 func ParseTypeInfo(itype interface{}) (*GenTypeInfo, error) {
-	t := reflect.TypeOf(itype)
+	// If we're handed *Foo instead of value Foo, deref the pointer.
+	// ParseTypeInfo is only every handed a top level type, so this shouldn't violate any expectations.
+	iv := reflect.ValueOf(itype)
+	switch iv.Kind() {
+	case reflect.Pointer, reflect.Interface:
+		iv = iv.Elem()
+	default:
+	}
+	t := iv.Type()
 
 	pkg := t.PkgPath()
 
@@ -1683,7 +1704,7 @@ func (g Gen) emitCborMarshalStructMap(w io.Writer, gti *GenTypeInfo) error {
 	}
 
 	if gti.Transparent {
-		return fmt.Errorf("transparent fields not supported in map mode, use tuple encoding (outcome should be the same)")
+		return fmt.Errorf("%#v: transparent fields not supported in map mode, use tuple encoding (outcome should be the same)", gti.Name)
 	}
 
 	err := g.doTemplate(w, gti, `func (t *{{ .Name }}) MarshalCBOR(w io.Writer) error {
@@ -1842,21 +1863,30 @@ func (t *{{ .Name}}) UnmarshalCBOR(r io.Reader) (err error) {
 		return fmt.Errorf("{{ .Name }}: map struct too large (%d)", extra)
 	}
 
-	var name string
 	n := extra
 
+	nameBuf := make([]byte, {{ .MaxMapKeyLength }})
 	for i := uint64(0); i < n; i++ {
+		nameLen, ok, err := cbg.ReadFullStringIntoBuf(cr, nameBuf, {{ MaxLen 0 "String" }})
+		if err != nil {
+			return err
+		}
+
+		if !ok {
+			// Field doesn't exist on this type, so ignore it
+			if err := cbg.ScanForLinks(cr, func(cid.Cid){}); err != nil {
+				return err
+			}
+			continue
+		}
+
 `)
 	if err != nil {
 		return err
 	}
 
-	if err := g.emitCborUnmarshalStringField(w, Field{Name: "name"}); err != nil {
-		return err
-	}
-
 	err = g.doTemplate(w, gti, `
-		switch name {
+		switch string(nameBuf[:nameLen]) {
 `)
 	if err != nil {
 		return err
@@ -1919,7 +1949,9 @@ func (t *{{ .Name}}) UnmarshalCBOR(r io.Reader) (err error) {
 	return g.doTemplate(w, gti, `
 		default:
 			// Field doesn't exist on this type, so ignore it
-			cbg.ScanForLinks(r, func(cid.Cid){})
+			if err := cbg.ScanForLinks(r, func(cid.Cid){}); err != nil {
+				return err
+			}
 		}
 	}
 
