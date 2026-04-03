@@ -12,8 +12,8 @@ require (
 	github.com/mark3labs/mcp-go v0.46.0
 	github.com/onsi/ginkgo/v2 v2.28.1
 	github.com/onsi/gomega v1.39.1
-	github.com/openshift/api v0.0.0-20251124165233-999c45c0835a
-	github.com/openshift/client-go v0.0.0-20251123231646-4685125c2287
+	github.com/openshift/api v0.0.0-20260326111139-30c2ef7a272e
+	github.com/openshift/client-go v0.0.0-20260330134249-7e1499aaacd7
 	github.com/pkg/errors v0.9.1
 	github.com/quay/claircore v1.5.48
 	github.com/spf13/cobra v1.10.2
@@ -21,10 +21,10 @@ require (
 	gitlab.com/gitlab-org/api/client-go v1.11.0
 	gopkg.in/yaml.v3 v3.0.1
 	helm.sh/helm/v3 v3.19.2
-	k8s.io/api v0.34.2
+	k8s.io/api v0.35.1
 	k8s.io/apimachinery v0.35.3
 	k8s.io/cli-runtime v0.34.2
-	k8s.io/client-go v0.34.2
+	k8s.io/client-go v0.35.1
 	k8s.io/kubectl v0.34.2
 )
 
