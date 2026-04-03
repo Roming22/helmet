@@ -42,8 +42,8 @@ type UpdateRepositoryCreationTemplateInput struct {
 	Prefix *string
 
 	// Updates the list of enumerable strings representing the Amazon ECR repository
-	// creation scenarios that this template will apply towards. The two supported
-	// scenarios are PULL_THROUGH_CACHE and REPLICATION
+	// creation scenarios that this template will apply towards. The supported
+	// scenarios are PULL_THROUGH_CACHE , REPLICATION , and CREATE_ON_PUSH
 	AppliedFor []types.RCTAppliedFor
 
 	// The ARN of the role to be assumed by Amazon ECR. This role must be in the same
@@ -135,7 +135,7 @@ func (c *Client) addOperationUpdateRepositoryCreationTemplateMiddlewares(stack *
 	if err = addComputePayloadSHA256(stack); err != nil {
 		return err
 	}
-	if err = addRetry(stack, options); err != nil {
+	if err = addRetry(stack, options, c); err != nil {
 		return err
 	}
 	if err = addRawResponseToMetadata(stack); err != nil {
@@ -157,9 +157,6 @@ func (c *Client) addOperationUpdateRepositoryCreationTemplateMiddlewares(stack *
 		return err
 	}
 	if err = addSetLegacyContextSigningOptionsMiddleware(stack); err != nil {
-		return err
-	}
-	if err = addTimeOffsetBuild(stack, c); err != nil {
 		return err
 	}
 	if err = addUserAgentRetryMode(stack, options); err != nil {

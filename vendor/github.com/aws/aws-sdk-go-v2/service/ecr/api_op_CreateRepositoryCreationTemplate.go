@@ -35,8 +35,8 @@ func (c *Client) CreateRepositoryCreationTemplate(ctx context.Context, params *C
 type CreateRepositoryCreationTemplateInput struct {
 
 	// A list of enumerable strings representing the Amazon ECR repository creation
-	// scenarios that this template will apply towards. The two supported scenarios are
-	// PULL_THROUGH_CACHE and REPLICATION
+	// scenarios that this template will apply towards. The supported scenarios are
+	// PULL_THROUGH_CACHE , REPLICATION , and CREATE_ON_PUSH
 	//
 	// This member is required.
 	AppliedFor []types.RCTAppliedFor
@@ -146,7 +146,7 @@ func (c *Client) addOperationCreateRepositoryCreationTemplateMiddlewares(stack *
 	if err = addComputePayloadSHA256(stack); err != nil {
 		return err
 	}
-	if err = addRetry(stack, options); err != nil {
+	if err = addRetry(stack, options, c); err != nil {
 		return err
 	}
 	if err = addRawResponseToMetadata(stack); err != nil {
@@ -168,9 +168,6 @@ func (c *Client) addOperationCreateRepositoryCreationTemplateMiddlewares(stack *
 		return err
 	}
 	if err = addSetLegacyContextSigningOptionsMiddleware(stack); err != nil {
-		return err
-	}
-	if err = addTimeOffsetBuild(stack, c); err != nil {
 		return err
 	}
 	if err = addUserAgentRetryMode(stack, options); err != nil {

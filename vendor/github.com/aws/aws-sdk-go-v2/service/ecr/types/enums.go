@@ -342,6 +342,7 @@ type RCTAppliedFor string
 const (
 	RCTAppliedForReplication      RCTAppliedFor = "REPLICATION"
 	RCTAppliedForPullThroughCache RCTAppliedFor = "PULL_THROUGH_CACHE"
+	RCTAppliedForCreateOnPush     RCTAppliedFor = "CREATE_ON_PUSH"
 )
 
 // Values returns all known values for RCTAppliedFor. Note that this can be
@@ -352,6 +353,7 @@ func (RCTAppliedFor) Values() []RCTAppliedFor {
 	return []RCTAppliedFor{
 		"REPLICATION",
 		"PULL_THROUGH_CACHE",
+		"CREATE_ON_PUSH",
 	}
 }
 
@@ -594,6 +596,7 @@ const (
 	UpstreamRegistryGitHubContainerRegistry UpstreamRegistry = "github-container-registry"
 	UpstreamRegistryAzureContainerRegistry  UpstreamRegistry = "azure-container-registry"
 	UpstreamRegistryGitLabContainerRegistry UpstreamRegistry = "gitlab-container-registry"
+	UpstreamRegistryChainguard              UpstreamRegistry = "chainguard"
 )
 
 // Values returns all known values for UpstreamRegistry. Note that this can be
@@ -610,5 +613,6 @@ func (UpstreamRegistry) Values() []UpstreamRegistry {
 		"github-container-registry",
 		"azure-container-registry",
 		"gitlab-container-registry",
+		"chainguard",
 	}
 }

@@ -12,6 +12,9 @@ import (
 )
 
 // Lists the artifacts associated with a specified subject image.
+//
+// The IAM principal invoking this operation must have the ecr:BatchGetImage
+// permission.
 func (c *Client) ListImageReferrers(ctx context.Context, params *ListImageReferrersInput, optFns ...func(*Options)) (*ListImageReferrersOutput, error) {
 	if params == nil {
 		params = &ListImageReferrersInput{}
@@ -122,7 +125,7 @@ func (c *Client) addOperationListImageReferrersMiddlewares(stack *middleware.Sta
 	if err = addComputePayloadSHA256(stack); err != nil {
 		return err
 	}
-	if err = addRetry(stack, options); err != nil {
+	if err = addRetry(stack, options, c); err != nil {
 		return err
 	}
 	if err = addRawResponseToMetadata(stack); err != nil {
@@ -144,9 +147,6 @@ func (c *Client) addOperationListImageReferrersMiddlewares(stack *middleware.Sta
 		return err
 	}
 	if err = addSetLegacyContextSigningOptionsMiddleware(stack); err != nil {
-		return err
-	}
-	if err = addTimeOffsetBuild(stack, c); err != nil {
 		return err
 	}
 	if err = addUserAgentRetryMode(stack, options); err != nil {
