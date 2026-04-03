@@ -2024,7 +2024,7 @@ github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.20
 ## explicit; go 1.15
 github.com/mattn/go-isatty
-# github.com/mattn/go-mastodon v0.0.10
+# github.com/mattn/go-mastodon v0.0.11
 ## explicit; go 1.23
 github.com/mattn/go-mastodon
 # github.com/mattn/go-runewidth v0.0.22
@@ -2641,8 +2641,8 @@ github.com/tomarrell/wrapcheck/v2/wrapcheck
 github.com/tommy-muehle/go-mnd/v2
 github.com/tommy-muehle/go-mnd/v2/checks
 github.com/tommy-muehle/go-mnd/v2/config
-# github.com/tomnomnom/linkheader v0.0.0-20180905144013-02ca5825eb80
-## explicit
+# github.com/tomnomnom/linkheader v0.0.0-20250811210735-e5fe3b51442e
+## explicit; go 1.13
 github.com/tomnomnom/linkheader
 # github.com/transparency-dev/formats v0.1.0
 ## explicit; go 1.24.0
