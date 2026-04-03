@@ -309,7 +309,7 @@ require (
 	github.com/goreleaser/chglog v0.7.4 // indirect
 	github.com/goreleaser/fileglob v1.4.0 // indirect
 	github.com/goreleaser/goreleaser/v2 v2.13.3 // indirect
-	github.com/goreleaser/nfpm/v2 v2.44.1 // indirect
+	github.com/goreleaser/nfpm/v2 v2.46.0 // indirect
 	github.com/goreleaser/quill v0.0.0-20251224035235-ab943733386f // indirect
 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 // indirect
 	github.com/gostaticanalysis/analysisutil v0.7.1 // indirect

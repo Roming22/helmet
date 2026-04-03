@@ -1719,7 +1719,7 @@ github.com/goreleaser/goreleaser/v2/pkg/config
 github.com/goreleaser/goreleaser/v2/pkg/context
 github.com/goreleaser/goreleaser/v2/pkg/defaults
 github.com/goreleaser/goreleaser/v2/pkg/healthcheck
-# github.com/goreleaser/nfpm/v2 v2.44.1
+# github.com/goreleaser/nfpm/v2 v2.46.0
 ## explicit; go 1.25
 github.com/goreleaser/nfpm/v2
 github.com/goreleaser/nfpm/v2/apk

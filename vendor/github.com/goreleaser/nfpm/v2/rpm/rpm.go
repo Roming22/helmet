@@ -4,8 +4,10 @@ package rpm
 
 import (
 	"bytes"
+	"cmp"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"strconv"
 	"strings"
@@ -52,7 +54,7 @@ func init() {
 // nolint: gochecknoglobals
 var DefaultRPM = &RPM{formatRPM}
 
-// DefaultRPM RPM packager.
+// DefaultSRPM SRPM packager.
 // nolint: gochecknoglobals
 var DefaultSRPM = &RPM{formatSRPM}
 
@@ -72,6 +74,7 @@ type RPM struct {
 }
 
 // https://docs.fedoraproject.org/ro/Fedora_Draft_Documentation/0.1/html/RPM_Guide/ch01s03.html
+// https://github.com/rpm-software-management/rpm/blob/4a9b7b5908d8b463a836b51322242677677bd8b7/lib/rpmrc.cc#L1167
 // nolint: gochecknoglobals
 var archToRPM = map[string]string{
 	"all":      "noarch",
@@ -84,7 +87,7 @@ var archToRPM = map[string]string{
 	"mips64le": "mips64el",
 	"mipsle":   "mipsel",
 	"mips":     "mips",
-	// TODO: other arches
+	"loong64":  "loongarch64",
 }
 
 func setDefaults(info *nfpm.Info) *nfpm.Info {
@@ -94,8 +97,8 @@ func setDefaults(info *nfpm.Info) *nfpm.Info {
 		info.Arch = arch
 	}
 
-	info.Release = defaultTo(info.Release, "1")
-
+	info.Release = cmp.Or(info.Release, "1")
+	info.RPM.Compression = cmp.Or(info.RPM.Compression, "gzip")
 	return info
 }
 
@@ -230,9 +233,6 @@ func buildRPMMeta(info *nfpm.Info) (*rpmpack.RPMMetaData, error) {
 		suggests,
 		conflicts rpmpack.Relations
 	)
-	if info.RPM.Compression == "" {
-		info.RPM.Compression = "gzip:-1"
-	}
 
 	if info.Epoch == "" {
 		epoch = uint64(rpmpack.NoEpoch)
@@ -442,7 +442,7 @@ func createFilesInsideRPM(info *nfpm.Info, rpm *rpmpack.RPM) (err error) {
 func asRPMDirectory(content *files.Content, mtime time.Time) *rpmpack.RPMFile {
 	return &rpmpack.RPMFile{
 		Name:  content.Destination,
-		Mode:  uint(content.Mode()) | tagDirectory,
+		Mode:  normalizeFileMode(content.Mode()) | tagDirectory,
 		MTime: uint32(mtime.Unix()),
 		Owner: content.FileInfo.Owner,
 		Group: content.FileInfo.Group,
@@ -469,10 +469,30 @@ func asRPMFile(content *files.Content, fileType rpmpack.FileType) (*rpmpack.RPMF
 	return &rpmpack.RPMFile{
 		Name:  content.Destination,
 		Body:  data,
-		Mode:  uint(content.FileInfo.Mode),
+		Mode:  normalizeFileMode(content.FileInfo.Mode),
 		MTime: uint32(content.FileInfo.MTime.Unix()),
 		Owner: content.FileInfo.Owner,
 		Group: content.FileInfo.Group,
 		Type:  fileType,
 	}, nil
+}
+
+func normalizeFileMode(mode fs.FileMode) uint {
+	rpmMode := uint(mode.Perm())
+
+	// Go's os.FileMode stores setuid/setgid/sticky at high bits
+	// (fs.ModeSetuid, etc.), but YAML-parsed octal values like 04755
+	// place them at the traditional Unix positions (0o4000, 0o2000,
+	// 0o1000). We must check both encodings.
+	if mode&fs.ModeSetuid != 0 || uint(mode)&0o4000 != 0 {
+		rpmMode |= 0o4000
+	}
+	if mode&fs.ModeSetgid != 0 || uint(mode)&0o2000 != 0 {
+		rpmMode |= 0o2000
+	}
+	if mode&fs.ModeSticky != 0 || uint(mode)&0o1000 != 0 {
+		rpmMode |= 0o1000
+	}
+
+	return rpmMode
 }
