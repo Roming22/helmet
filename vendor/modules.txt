@@ -560,7 +560,7 @@ github.com/bkielbasa/cyclop/pkg/analyzer
 # github.com/blacktop/go-dwarf v1.0.14
 ## explicit; go 1.19
 github.com/blacktop/go-dwarf
-# github.com/blacktop/go-macho v1.1.258
+# github.com/blacktop/go-macho v1.1.264
 ## explicit; go 1.20
 github.com/blacktop/go-macho
 github.com/blacktop/go-macho/internal/saferio

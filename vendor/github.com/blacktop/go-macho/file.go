@@ -40,9 +40,21 @@ type File struct {
 	exp         []trie.TrieExport
 	exptrieData []byte
 	binds       types.Binds
-	objc        map[uint64]any
-	swift       map[uint64]any
-	ledata      *bytes.Buffer // tmp storage of linkedit data
+	rebases     []types.Rebase
+	rebasesDone bool
+
+	dyldInfoCacheBuilt    bool
+	dyldInfoRebaseTargets map[uint64]uint64
+	dyldInfoRebaseValues  map[uint64]struct{}
+	dyldInfoBindsByAddr   map[uint64]types.Bind
+
+	objc   map[uint64]any
+	swift  map[uint64]any
+	ledata *bytes.Buffer // tmp storage of linkedit data
+
+	objcRuntimeOnce          sync.Once
+	objcHasNonFragileRuntime bool
+	objcHasFragileRuntime    bool
 
 	sharedCacheRelativeSelectorBaseVMAddress uint64 // objc_opt version 16
 	swiftAutoDemangle                        bool
@@ -64,6 +76,15 @@ var ErrMachONoBindInfo = errors.New("MachO does not contain bind information (fi
 
 var ErrCStringNoTerminator = errors.New("cstring has no terminator")
 var ErrCStringNotFound = errors.New("cstring not found")
+
+// cstringBufPool reuses 4 KiB read buffers in GetCString to avoid hammering
+// the allocator's mcentral lock when many goroutines read C strings concurrently.
+var cstringBufPool = sync.Pool{
+	New: func() any {
+		b := make([]byte, 0x1000)
+		return &b
+	},
+}
 
 // FormatError is returned by some operations if the data does
 // not have the correct format for an object file.
@@ -1284,7 +1305,7 @@ func NewFile(r io.ReaderAt, config ...FileConfig) (*File, error) {
 			if err := binary.Read(b, bo, &led); err != nil {
 				return nil, fmt.Errorf("failed to read LC_FUNCTION_VARIANT_FIXUPS: %v", err)
 			}
-			l := new(FunctionVariants)
+			l := new(FunctionVariantFixups)
 			l.LoadBytes = cmddat
 			l.LoadCmd = cmd
 			l.Len = siz
@@ -1361,6 +1382,7 @@ func NewFile(r io.ReaderAt, config ...FileConfig) (*File, error) {
 			s.ReaderAt = f.sr
 		}
 	}
+
 	return f, nil
 }
 
@@ -1390,6 +1412,7 @@ func (f *File) parseSymtab(symdat, strtab, cmddat []byte, hdr *types.SymtabCmd, 
 			n.Value = uint64(n32.Value)
 		}
 		var name string
+		var indirectName string
 		if n.Name < uint32(len(strtab)) {
 			// We add "_" to Go symbols. Strip it here. See issue 33808.
 			name = cstring(strtab[n.Name:])
@@ -1397,12 +1420,19 @@ func (f *File) parseSymtab(symdat, strtab, cmddat []byte, hdr *types.SymtabCmd, 
 				name = name[1:]
 			}
 		}
+		if n.Type.IsIndirectSym() && n.Value < uint64(len(strtab)) {
+			indirectName = cstring(strtab[n.Value:])
+			if strings.Contains(indirectName, ".") && indirectName[0] == '_' {
+				indirectName = indirectName[1:]
+			}
+		}
 		symtab = append(symtab, Symbol{
-			Name:  name,
-			Type:  n.Type,
-			Sect:  n.Sect,
-			Desc:  n.Desc,
-			Value: n.Value,
+			Name:         name,
+			IndirectName: indirectName,
+			Type:         n.Type,
+			Sect:         n.Sect,
+			Desc:         n.Desc,
+			Value:        n.Value,
 		})
 	}
 	st := new(Symtab)
@@ -1609,6 +1639,13 @@ func (f *File) GetPointerAtAddress(address uint64) (uint64, error) {
 // lookups will reparse the load command payload.
 func (f *File) ResetFixupsCache() {
 	f.dcf = nil
+	f.binds = nil
+	f.rebases = nil
+	f.rebasesDone = false
+	f.dyldInfoCacheBuilt = false
+	f.dyldInfoRebaseTargets = nil
+	f.dyldInfoRebaseValues = nil
+	f.dyldInfoBindsByAddr = nil
 	if f.vma != nil {
 		f.vma.ChainedPointerFormat = 0
 	}
@@ -1623,7 +1660,7 @@ func (f *File) GetSlidPointerAtAddress(address uint64) (uint64, error) {
 	var raw uint64
 	var rawRead bool
 
-	if offErr == nil && f.HasFixups() {
+	if offErr == nil && f.HasDyldChainedFixups() {
 		dcf, err := f.DyldChainedFixups()
 		if err == nil && dcf != nil {
 			if format, fmtErr := dcf.PointerFormatForOffset(offset); fmtErr == nil {
@@ -1655,11 +1692,15 @@ func (f *File) GetSlidPointerAtAddress(address uint64) (uint64, error) {
 		}
 	}
 
+	if resolved, ok := f.decodeDyldInfoPointerAtAddress(address, raw); ok {
+		return resolved, nil
+	}
+
 	return f.SlidePointer(raw), nil
 }
 
 func (f *File) decodeChainedPointer(value uint64) (uint64, bool) {
-	if value == 0 || !f.HasFixups() {
+	if value == 0 || !f.HasDyldChainedFixups() {
 		return 0, false
 	}
 
@@ -1688,9 +1729,113 @@ func (f *File) decodeChainedPointer(value uint64) (uint64, bool) {
 	return value, true
 }
 
+func (f *File) buildDyldInfoFixupsCache() error {
+	if f.dyldInfoCacheBuilt {
+		return nil
+	}
+
+	f.dyldInfoRebaseTargets = make(map[uint64]uint64)
+	f.dyldInfoRebaseValues = make(map[uint64]struct{})
+	f.dyldInfoBindsByAddr = make(map[uint64]types.Bind)
+
+	rebases, err := f.GetRebaseInfo()
+	if err != nil && !errors.Is(err, ErrMachODyldInfoNotFound) {
+		return err
+	}
+	for _, rebase := range rebases {
+		addr := rebase.Start + rebase.Offset
+		f.dyldInfoRebaseTargets[addr] = f.normalizeDyldInfoPointer(rebase.Value)
+		f.dyldInfoRebaseValues[rebase.Value] = struct{}{}
+	}
+
+	binds, err := f.GetBindInfo()
+	if err != nil && !errors.Is(err, ErrMachODyldInfoNotFound) {
+		return err
+	}
+	for _, bind := range binds {
+		addr := bind.Start + bind.SegOffset
+		if _, exists := f.dyldInfoBindsByAddr[addr]; exists {
+			continue
+		}
+		f.dyldInfoBindsByAddr[addr] = bind
+	}
+
+	f.dyldInfoCacheBuilt = true
+	return nil
+}
+
+func (f *File) normalizeDyldInfoPointer(value uint64) uint64 {
+	if value == 0 {
+		return 0
+	}
+	if f.FindSegmentForVMAddr(value) != nil {
+		return value
+	}
+
+	base := f.GetBaseAddress()
+	if value >= base {
+		return value
+	}
+
+	candidate := value + base
+	if f.FindSegmentForVMAddr(candidate) != nil {
+		return candidate
+	}
+
+	return value
+}
+
+func (f *File) usesDyldInfoOnlyFixups() bool {
+	return f.HasDyldInfoOnly() && !f.HasDyldChainedFixups()
+}
+
+func (f *File) decodeDyldInfoPointer(value uint64) (uint64, bool) {
+	if value == 0 || !f.usesDyldInfoOnlyFixups() {
+		return 0, false
+	}
+
+	if err := f.buildDyldInfoFixupsCache(); err != nil {
+		return 0, false
+	}
+	if _, ok := f.dyldInfoRebaseValues[value]; !ok {
+		return 0, false
+	}
+	return f.normalizeDyldInfoPointer(value), true
+}
+
+func (f *File) decodeDyldInfoPointerAtAddress(address, raw uint64) (uint64, bool) {
+	if !f.usesDyldInfoOnlyFixups() {
+		return 0, false
+	}
+
+	if err := f.buildDyldInfoFixupsCache(); err != nil {
+		return 0, false
+	}
+
+	if resolved, ok := f.dyldInfoRebaseTargets[address]; ok {
+		return resolved, true
+	}
+
+	if bind, ok := f.dyldInfoBindsByAddr[address]; ok {
+		if bind.Dylib == f.LibraryOrdinalName(types.BIND_SPECIAL_DYLIB_SELF) {
+			symAddr, err := f.FindSymbolAddress(bind.Name)
+			if err != nil {
+				return 0, true
+			}
+			return uint64(int64(symAddr) + bind.Addend), true
+		}
+		return raw, true
+	}
+
+	return 0, false
+}
+
 // SlidePointer returns slid or un-chained pointer
 func (f *File) SlidePointer(ptr uint64) uint64 {
 	if resolved, ok := f.decodeChainedPointer(ptr); ok {
+		return resolved
+	}
+	if resolved, ok := f.decodeDyldInfoPointer(ptr); ok {
 		return resolved
 	}
 	return f.vma.Convert(ptr)
@@ -1701,6 +1846,9 @@ func (f *File) convertToVMAddr(value uint64) uint64 {
 		return 0
 	}
 	if resolved, ok := f.decodeChainedPointer(value); ok {
+		return resolved
+	}
+	if resolved, ok := f.decodeDyldInfoPointer(value); ok {
 		return resolved
 	} else if f.isArm64e() {
 		// TODO: fix this dumb hack for SUPPORT_OLD_ARM64E_FORMAT
@@ -1758,12 +1906,12 @@ func (f *File) GetBindName(pointer uint64) (string, error) {
 
 // GetCString returns a c-string at a given virtual address in the MachO
 func (f *File) GetCString(addr uint64) (string, error) {
-	const (
-		chunkSize = 0x1000  // 4 KiB per read attempt
-		maxLength = 1 << 20 // 1 MiB safety cap
-	)
+	const maxLength = 1 << 20 // 1 MiB safety cap
 
-	buf := make([]byte, chunkSize)
+	bp := cstringBufPool.Get().(*[]byte)
+	buf := *bp
+	defer cstringBufPool.Put(bp)
+
 	var out []byte
 	current := addr
 
@@ -1811,6 +1959,10 @@ func (f *File) GetCString(addr uint64) (string, error) {
 func (f *File) getUTF16String(addr, charCount uint64) (string, error) {
 	if charCount == 0 {
 		return "", nil
+	}
+	const maxCharCount = 1 << 20 // 1M code units safety cap
+	if charCount > maxCharCount {
+		return "", fmt.Errorf("implausible UTF-16 char count %d at address %#x", charCount, addr)
 	}
 	buf := make([]byte, charCount*2)
 	if _, err := f.cr.ReadAtAddr(buf, addr); err != nil {
@@ -2166,6 +2318,159 @@ func (f *File) FunctionStarts() *FunctionStarts {
 		}
 	}
 	return nil
+}
+
+// FunctionVariants returns the LC_FUNCTION_VARIANTS load command, or nil if none exists.
+func (f *File) FunctionVariants() *FunctionVariants {
+	for _, l := range f.Loads {
+		if fv, ok := l.(*FunctionVariants); ok {
+			return fv
+		}
+	}
+	return nil
+}
+
+// FunctionVariantFixups returns the LC_FUNCTION_VARIANT_FIXUPS load command, or nil if none exists.
+func (f *File) FunctionVariantFixups() *FunctionVariantFixups {
+	for _, l := range f.Loads {
+		if fv, ok := l.(*FunctionVariantFixups); ok {
+			return fv
+		}
+	}
+	return nil
+}
+
+// GetFunctionVariants parses and returns the function variants data.
+func (f *File) GetFunctionVariants() (*types.FuncVarData, error) {
+	fv := f.FunctionVariants()
+	if fv == nil {
+		return nil, fmt.Errorf("LC_FUNCTION_VARIANTS not found")
+	}
+
+	// Return cached data if already parsed
+	if fv.Data != nil {
+		f.resolveFunctionVariantSymbolsIfParsed(fv)
+		return fv.Data, nil
+	}
+
+	// Read the payload data
+	data := make([]byte, fv.Size)
+	if _, err := f.cr.ReadAt(data, int64(fv.Offset)); err != nil {
+		return nil, fmt.Errorf("failed to read function variants data: %v", err)
+	}
+
+	// Parse the data
+	parsed, err := ParseFunctionVariants(data, f.ByteOrder)
+	if err != nil {
+		return nil, err
+	}
+
+	// Cache the parsed data
+	fv.Data = parsed
+
+	f.resolveFunctionVariantSymbolsIfParsed(fv)
+
+	return parsed, nil
+}
+
+// GetFunctionVariantFixups parses and returns the function variant fixups data.
+func (f *File) GetFunctionVariantFixups() (*types.FuncVarFixupsData, error) {
+	fv := f.FunctionVariantFixups()
+	if fv == nil {
+		return nil, fmt.Errorf("LC_FUNCTION_VARIANT_FIXUPS not found")
+	}
+
+	// Return cached data if already parsed
+	if fv.Data != nil {
+		return fv.Data, nil
+	}
+
+	// Read the payload data
+	data := make([]byte, fv.Size)
+	if _, err := f.cr.ReadAt(data, int64(fv.Offset)); err != nil {
+		return nil, fmt.Errorf("failed to read function variant fixups data: %v", err)
+	}
+
+	// Parse the data
+	parsed, err := ParseFunctionVariantFixups(data, f.ByteOrder)
+	if err != nil {
+		return nil, err
+	}
+
+	// Cache the parsed data
+	fv.Data = parsed
+
+	return parsed, nil
+}
+
+// Enrich pre-parses optional data to add detail to load command stringers/JSON.
+// It is best-effort; any encountered errors are returned as a joined error.
+func (f *File) Enrich() error {
+	var errs []error
+
+	if f.DyldExportsTrie() != nil {
+		if _, err := f.DyldExports(); err != nil {
+			errs = append(errs, err)
+		}
+	}
+
+	if f.FunctionVariants() != nil {
+		if _, err := f.GetFunctionVariants(); err != nil {
+			errs = append(errs, err)
+		}
+	}
+
+	if f.FunctionVariantFixups() != nil {
+		if _, err := f.GetFunctionVariantFixups(); err != nil {
+			errs = append(errs, err)
+		}
+	}
+
+	if len(errs) == 0 {
+		return nil
+	}
+	return errors.Join(errs...)
+}
+
+func (f *File) resolveFunctionVariantSymbolsIfParsed(fv *FunctionVariants) {
+	if fv == nil || fv.Data == nil || len(fv.Data.Tables) == 0 {
+		return
+	}
+	if f.Symtab == nil && f.exp == nil {
+		return
+	}
+
+	addrToName := make(map[uint64]string)
+	if f.Symtab != nil {
+		addrToName = make(map[uint64]string, len(f.Symtab.Syms))
+		for _, sym := range f.Symtab.Syms {
+			if _, ok := addrToName[sym.Value]; !ok {
+				addrToName[sym.Value] = sym.Name
+			}
+		}
+	}
+	if f.exp != nil {
+		for _, exp := range f.exp {
+			if _, ok := addrToName[exp.Address]; !ok {
+				addrToName[exp.Address] = exp.Name
+			}
+		}
+	}
+
+	if len(addrToName) == 0 {
+		return
+	}
+	for i := range fv.Data.Tables {
+		for j := range fv.Data.Tables[i].Entries {
+			entry := &fv.Data.Tables[i].Entries[j]
+			if entry.IsTableIndex() || entry.Symbol != "" {
+				continue
+			}
+			if name, ok := addrToName[uint64(entry.ImplValue())]; ok {
+				entry.Symbol = name
+			}
+		}
+	}
 }
 
 func (f *File) GenerateFunctionStarts() ([]types.Function, error) {
@@ -2822,26 +3127,45 @@ func (f *File) GetBindInfo() (types.Binds, error) {
 }
 
 func (f *File) GetRebaseInfo() ([]types.Rebase, error) {
-	if dinfo := f.DyldInfo(); dinfo != nil {
-		if dinfo.RebaseSize > 0 {
-			dat := make([]byte, dinfo.RebaseSize)
-			if _, err := f.cr.ReadAt(dat, int64(dinfo.RebaseOff)); err != nil {
-				return nil, fmt.Errorf("failed to read rebase info: %v", err)
-			}
-			return f.parseRebase(bytes.NewReader(dat))
-		}
-	} else if dinfo := f.DyldInfoOnly(); dinfo != nil {
-		if dinfo.RebaseSize > 0 {
-			dat := make([]byte, dinfo.RebaseSize)
-			if _, err := f.cr.ReadAt(dat, int64(dinfo.RebaseOff)); err != nil {
-				return nil, fmt.Errorf("failed to read rebase info: %v", err)
-			}
-			return f.parseRebase(bytes.NewReader(dat))
-		}
-	} else {
+	if f.rebasesDone {
+		return f.rebases, nil
+	}
+	var (
+		rebaseOff  uint32
+		rebaseSize uint32
+	)
+
+	switch {
+	case f.DyldInfo() != nil:
+		dinfo := f.DyldInfo()
+		rebaseOff = dinfo.RebaseOff
+		rebaseSize = dinfo.RebaseSize
+	case f.DyldInfoOnly() != nil:
+		dinfo := f.DyldInfoOnly()
+		rebaseOff = dinfo.RebaseOff
+		rebaseSize = dinfo.RebaseSize
+	default:
 		return nil, ErrMachODyldInfoNotFound
 	}
-	return nil, nil
+
+	if rebaseSize == 0 {
+		f.rebasesDone = true
+		return nil, nil
+	}
+
+	dat := make([]byte, rebaseSize)
+	if _, err := f.cr.ReadAt(dat, int64(rebaseOff)); err != nil {
+		return nil, fmt.Errorf("failed to read rebase info: %v", err)
+	}
+
+	rebases, err := f.parseRebase(bytes.NewReader(dat))
+	if err != nil {
+		return nil, err
+	}
+
+	f.rebases = rebases
+	f.rebasesDone = true
+	return f.rebases, nil
 }
 
 func (f *File) GetExports() ([]trie.TrieExport, error) {
