@@ -810,8 +810,8 @@ github.com/davidmz/go-pageant
 # github.com/denis-tingaikin/go-header v0.5.0
 ## explicit; go 1.21
 github.com/denis-tingaikin/go-header
-# github.com/dghubble/go-twitter v0.0.0-20211115160449-93a8679adecb
-## explicit; go 1.16
+# github.com/dghubble/go-twitter v0.0.0-20221104224141-912508c3888b
+## explicit; go 1.17
 github.com/dghubble/go-twitter/twitter
 # github.com/dghubble/oauth1 v0.7.3
 ## explicit; go 1.19
