@@ -607,8 +607,8 @@ github.com/breml/errchkjson
 # github.com/buger/jsonparser v1.1.2
 ## explicit; go 1.13
 github.com/buger/jsonparser
-# github.com/butuzov/ireturn v0.4.0
-## explicit; go 1.23.0
+# github.com/butuzov/ireturn v0.4.1
+## explicit; go 1.25.0
 github.com/butuzov/ireturn/analyzer
 github.com/butuzov/ireturn/analyzer/internal/config
 github.com/butuzov/ireturn/analyzer/internal/types
