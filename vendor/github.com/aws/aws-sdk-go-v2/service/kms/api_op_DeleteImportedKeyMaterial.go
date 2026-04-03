@@ -19,6 +19,15 @@ import (
 // not change the KMS key's state. Otherwise, it changes the KMS key's state to
 // PendingImport .
 //
+// Considerations for multi-Region symmetric encryption keys
+//
+//   - When you delete the key material of a primary Region key that is in
+//     PENDING_ROTATION or PENDING_MULTI_REGION_IMPORT_AND_ROTATION state, you'll
+//     also be deleting the key materials for the replica Region keys.
+//
+//   - If you delete any key material of a replica Region key, the primary Region
+//     key and other replica Region keys remain unchanged.
+//
 // The KMS key that you use for this operation must be in a compatible key state.
 // For details, see [Key states of KMS keys]in the Key Management Service Developer Guide.
 //
@@ -137,7 +146,7 @@ func (c *Client) addOperationDeleteImportedKeyMaterialMiddlewares(stack *middlew
 	if err = addComputePayloadSHA256(stack); err != nil {
 		return err
 	}
-	if err = addRetry(stack, options); err != nil {
+	if err = addRetry(stack, options, c); err != nil {
 		return err
 	}
 	if err = addRawResponseToMetadata(stack); err != nil {
@@ -159,9 +168,6 @@ func (c *Client) addOperationDeleteImportedKeyMaterialMiddlewares(stack *middlew
 		return err
 	}
 	if err = addSetLegacyContextSigningOptionsMiddleware(stack); err != nil {
-		return err
-	}
-	if err = addTimeOffsetBuild(stack, c); err != nil {
 		return err
 	}
 	if err = addUserAgentRetryMode(stack, options); err != nil {

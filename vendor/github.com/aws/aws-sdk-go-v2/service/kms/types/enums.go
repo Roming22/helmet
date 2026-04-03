@@ -217,6 +217,23 @@ func (DataKeySpec) Values() []DataKeySpec {
 	}
 }
 
+type DryRunModifierType string
+
+// Enum values for DryRunModifierType
+const (
+	DryRunModifierTypeIgnoreCiphertext DryRunModifierType = "IGNORE_CIPHERTEXT"
+)
+
+// Values returns all known values for DryRunModifierType. Note that this can be
+// expanded in the future, and so it is only as up to date as the client.
+//
+// The ordering of this slice is not guaranteed to be stable across updates.
+func (DryRunModifierType) Values() []DryRunModifierType {
+	return []DryRunModifierType{
+		"IGNORE_CIPHERTEXT",
+	}
+}
+
 type EncryptionAlgorithmSpec string
 
 // Enum values for EncryptionAlgorithmSpec
@@ -422,9 +439,10 @@ type KeyMaterialState string
 
 // Enum values for KeyMaterialState
 const (
-	KeyMaterialStateNonCurrent      KeyMaterialState = "NON_CURRENT"
-	KeyMaterialStateCurrent         KeyMaterialState = "CURRENT"
-	KeyMaterialStatePendingRotation KeyMaterialState = "PENDING_ROTATION"
+	KeyMaterialStateNonCurrent                          KeyMaterialState = "NON_CURRENT"
+	KeyMaterialStateCurrent                             KeyMaterialState = "CURRENT"
+	KeyMaterialStatePendingRotation                     KeyMaterialState = "PENDING_ROTATION"
+	KeyMaterialStatePendingMultiRegionImportAndRotation KeyMaterialState = "PENDING_MULTI_REGION_IMPORT_AND_ROTATION"
 )
 
 // Values returns all known values for KeyMaterialState. Note that this can be
@@ -436,6 +454,7 @@ func (KeyMaterialState) Values() []KeyMaterialState {
 		"NON_CURRENT",
 		"CURRENT",
 		"PENDING_ROTATION",
+		"PENDING_MULTI_REGION_IMPORT_AND_ROTATION",
 	}
 }
 
