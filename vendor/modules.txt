@@ -2735,7 +2735,7 @@ gitlab.com/bosi/decorder
 # gitlab.com/digitalxero/go-conventional-commit v1.0.7
 ## explicit; go 1.13
 gitlab.com/digitalxero/go-conventional-commit
-# gitlab.com/gitlab-org/api/client-go v1.11.0
+# gitlab.com/gitlab-org/api/client-go v1.46.0
 ## explicit; go 1.24.0
 gitlab.com/gitlab-org/api/client-go
 # go-simpler.org/musttag v0.14.0
