@@ -96,3 +96,4 @@ request guidelines.
 - [Example Implementation](example/helmet-ex/)
 - [Issue Tracker](https://github.com/redhat-appstudio/helmet/issues)
 - [Releases](https://github.com/redhat-appstudio/helmet/releases)
+- [Release Process](RELEASING.md)

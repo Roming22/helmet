@@ -154,6 +154,10 @@ make security GOVULNCHECK_IGNORE_MODULES="" GOVULNCHECK_IGNORE_IDS=""
 
 **Note:** `jq` is required for security scanning (see [Prerequisites](#prerequisites)).
 
+# Releasing
+
+See [RELEASING.md](RELEASING.md) for the release process, version guidelines, and troubleshooting.
+
 # Pull Request Checklist
 
 Before submitting a PR, verify:

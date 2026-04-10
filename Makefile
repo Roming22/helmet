@@ -138,11 +138,6 @@ tool-gh:
 		{ echo "# Error: 'gh' not found in PATH."; exit 1; }
 	@gh --version
 
-# Executes goreleaser via go tool (version from go.mod).
-.PHONY: tool-goreleaser
-tool-goreleaser:
-	@go tool goreleaser --version
-
 # Executes ginkgo via go tool (version from go.mod).
 .PHONY: tool-ginkgo
 tool-ginkgo:
@@ -196,52 +191,21 @@ govulncheck:
 security: govulncheck
 
 #
-# GitHub Release
+# Release
 #
 
-# Asserts the required environment variables are set and the target release
-# version starts with "v".
-github-preflight:
-ifeq ($(strip $(GITHUB_REF_NAME)),)
-	$(error variable GITHUB_REF_NAME is not set)
-endif
-ifeq ($(shell echo ${GITHUB_REF_NAME} |grep -v -E '^v'),)
-	@echo GITHUB_REF_NAME=\"${GITHUB_REF_NAME}\"
-else
-	$(error invalid GITHUB_REF_NAME, it must start with "v")
-endif
-ifeq ($(strip $(GITHUB_TOKEN)),)
-	$(error variable GITHUB_TOKEN is not set)
-endif
-
-# Creates a new GitHub release with GITHUB_REF_NAME.
-.PHONY: github-release-create
-github-release-create: tool-gh
-	gh release view $(GITHUB_REF_NAME) >/dev/null 2>&1 || \
-		gh release create --generate-notes $(GITHUB_REF_NAME)
-
-# Releases the GITHUB_REF_NAME.
-github-release: \
-	github-preflight \
-	github-release-create
-
-# Goreleaser
-#
-
-# Builds release assets for current platform (snapshot mode).
-.PHONY: goreleaser-snapshot
-goreleaser-snapshot:
-	go tool goreleaser build --snapshot --clean $(ARGS)
-
-# Builds release assets for all platforms (snapshot mode).
-.PHONY: goreleaser-snapshot-all
-goreleaser-snapshot-all:
-	go tool goreleaser build --snapshot --clean
-
-# Creates a full release (CI only).
-.PHONY: goreleaser-release
-goreleaser-release: github-preflight
-	go tool goreleaser release --clean
+# Validates release tag format and runs the full CI suite.
+.PHONY: pre-release
+pre-release: build test-unit lint security
+	@if [ -z "$(GITHUB_REF_NAME)" ]; then \
+		echo "GITHUB_REF_NAME is required" >&2; \
+		exit 1; \
+	fi
+	@if ! echo '$(GITHUB_REF_NAME)' | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+(-beta\.[0-9]+|-rc\.[0-9]+)?$$'; then \
+		echo "Invalid tag format: $(GITHUB_REF_NAME). Expected: vMAJOR.MINOR.PATCH[-beta.N|-rc.N]" >&2; \
+		exit 1; \
+	fi
+	@echo "Pre-release validated: $(GITHUB_REF_NAME)"
 
 #
 # KinD Cluster Management
@@ -296,14 +260,11 @@ verify-mod:
 	go mod tidy
 	git diff --exit-code go.mod go.sum
 
-# Orchestrates the release process.
+# Orchestrates the release process. Tag is created via GitHub UI; this target
+# validates and populates the release.
 .PHONY: release
-release: build test-unit lint
-ifndef GITHUB_REF_NAME
-	$(error GITHUB_REF_NAME is required. Usage: make release GITHUB_REF_NAME=v0.1.0-beta.1)
-endif
-	./hack/release.sh $(GITHUB_REF_NAME)
-	$(MAKE) github-release GITHUB_REF_NAME=$(GITHUB_REF_NAME)
+release: pre-release
+	./hack/release.sh
 
 #
 # Show help
@@ -323,11 +284,9 @@ help:
 	@echo "  test-e2e-mcp             - Run E2E MCP tests (requires KinD + image)"
 	@echo "  lint                     - Run linting"
 	@echo "  security                 - Run govulncheck vulnerability scan"
-	@echo "  github-release-create    - Create GitHub release (requires 'gh')"
-	@echo "  goreleaser-snapshot      - Build release assets for current platform"
-	@echo "  goreleaser-release       - Create full release (CI only)"
+	@echo "  pre-release              - Validate tag and run full CI suite"
 	@echo "  kind-up                  - Create KinD cluster with local registry"
 	@echo "  kind-down                - Delete KinD cluster and registry"
 	@echo "  kind-status              - Show KinD cluster and registry status"
-	@echo "  release                  - Orchestrate release process (requires GITHUB_REF_NAME)"
+	@echo "  release                  - Validate, test, and populate GitHub release (GHA only)"
 	@echo "  help                     - Show this help"

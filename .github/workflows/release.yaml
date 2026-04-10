@@ -1,0 +1,36 @@
+---
+name: Release
+
+on:
+  release:
+    types: 
+      - published
+
+permissions:
+  contents: write
+
+# Ensure the release process doesn't allow concurrent release actions, and don't
+# cancel each other.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  # GitHub release/pre-release tag.
+  GITHUB_REF_NAME: ${{ github.event.release.tag_name }}
+  # Making the GitHub token available for the release action, needed to edit the
+  # release page.
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      # Checking out the specific release tag.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          fetch-depth: 0
+      - uses: ./.github/actions/go
+      # Running the release automation.
+      - run: make release
