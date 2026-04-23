@@ -26,11 +26,11 @@ These flags are available for every command:
 
 | Flag | Type | Default | Description |
 |------|------|---------|-------------|
-| `--debug` | bool | `false` | Enable debug mode (verbose logging) |
 | `--dry-run` | bool | `false` | Enable dry-run mode (no cluster mutations) |
 | `--kube-config` | string | `$KUBECONFIG` or `~/.kube/config` | Path to kubeconfig file |
 | `--log-level` | string | `warn` | Log verbosity level (`debug`, `info`, `warn`, `error`) |
 | `--timeout` | duration | `15m` | Helm client timeout duration |
+| `--verbose` / `-v` | bool | `false` | Verbose output |
 | `--version` | bool | `false` | Show application version and commit ID |
 
 Flags use Cobra's persistent flag mechanism, inheriting from the root command to all subcommands.
@@ -110,8 +110,8 @@ helmet-ex deploy
 # Deploy single chart
 helmet-ex deploy charts/helmet-product-a
 
-# Dry-run with debug output
-helmet-ex deploy --dry-run --debug
+# Dry-run with verbose output
+helmet-ex deploy --dry-run --verbose
 
 # Use custom values template
 helmet-ex deploy --values-template /path/to/values.yaml.tpl
@@ -235,8 +235,8 @@ helmet-ex template --show-values=false charts/helmet-product-a
 # Show both values and manifests
 helmet-ex template charts/helmet-product-a
 
-# Debug mode shows raw values before template rendering
-helmet-ex template --debug charts/helmet-product-a
+# Verbose mode shows raw values before template rendering
+helmet-ex template --verbose charts/helmet-product-a
 ```
 
 ### `installer`

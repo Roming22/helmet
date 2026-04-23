@@ -60,7 +60,7 @@ graph LR
 | `internal/chartfs/` | Filesystem abstraction for charts | No | `ChartFS`, `OverlayFS`, `BufferedFiles` |
 | `internal/installer/` | Orchestrates chart installation and MCP Jobs | No | `Installer`, `Job` |
 | `internal/k8s/` | Kubernetes client utilities | No | `Interface`, `Kube` |
-| `internal/flags/` | Global CLI flag definitions | No | `Flags` (Debug, DryRun, KubeConfigPath, LogLevel, Timeout) |
+| `internal/flags/` | Global CLI flag definitions | No | `Flags` (DryRun, KubeConfigPath, LogLevel, Timeout, Verbose) |
 | `internal/subcmd/` | Standard CLI subcommand implementations | No | deploy, config, topology, integration, mcp-server, template, installer |
 | `internal/mcptools/` | MCP tool definitions for AI assistants | No | `Interface`, `MCPToolsBuilder` |
 | `internal/annotations/` | Helm chart annotation constants | No | `helmet.redhat-appstudio.github.com/*` |

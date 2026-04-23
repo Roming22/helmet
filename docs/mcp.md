@@ -75,7 +75,7 @@ When `deploy` is invoked, the MCP server — authenticated via the user's kubeco
 2. **`ClusterRoleBinding`** named `{appName}`, binding the `ServiceAccount` to the `cluster-admin` `ClusterRole` (via server-side apply)
 3. **`Job`** named `{appName}-deploy-job` (via `Create` — only one Job is allowed; use `force: true` to replace an existing one) with:
    - Container image: the consumer's installer application image (from `WithMCPImage()` or `--image`)
-   - Args: `["deploy"]` (with optional `--debug`, `--dry-run`)
+   - Args: `["deploy"]` (with optional `--verbose`, `--dry-run`)
    - Env: `KUBECONFIG=""` (forces [in-cluster authentication](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#service-account-tokens))
    - RestartPolicy: `Never`, BackoffLimit: `0`
    - Labels: `type=installer-job.helmet.redhat-appstudio.github.com`
@@ -171,7 +171,7 @@ All tools are prefixed with `<app-name>_` (e.g., `helmet-ex_config_get`).
 
 | Tool | Arguments | Description |
 |------|-----------|-------------|
-| `deploy` | `dry_run` (bool, default true), `force` (bool), `debug` (bool) | Creates deployment Job |
+| `deploy` | `dry-run` (bool, default true), `force` (bool), `verbose` (bool) | Creates deployment Job |
 | `status` | None | Reports current phase and suggested next action |
 
 ### Topology and Notes

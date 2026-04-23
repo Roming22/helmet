@@ -14,6 +14,7 @@ import (
 	"github.com/redhat-appstudio/helmet/internal/chartfs"
 	"github.com/redhat-appstudio/helmet/internal/config"
 	"github.com/redhat-appstudio/helmet/internal/constants"
+	"github.com/redhat-appstudio/helmet/internal/flags"
 	"github.com/redhat-appstudio/helmet/internal/integrations"
 	"github.com/redhat-appstudio/helmet/internal/k8s"
 	"github.com/redhat-appstudio/helmet/internal/runcontext"
@@ -126,7 +127,7 @@ func TestNewIntegration_CommandNameInvariant(t *testing.T) {
 	appCtx := testAppContext()
 	runCtx := testRunContext(t)
 	manager := testManager(t, runCtx)
-	cmd := NewIntegration(appCtx, runCtx, manager)
+	cmd := NewIntegration(appCtx, runCtx, manager, flags.NewFlags())
 
 	// Build a set of expected integration names from modules.
 	moduleNames := map[string]bool{}
@@ -155,7 +156,7 @@ func TestNewIntegration_TASAliasPreserved(t *testing.T) {
 	appCtx := testAppContext()
 	runCtx := testRunContext(t)
 	manager := testManager(t, runCtx)
-	cmd := NewIntegration(appCtx, runCtx, manager)
+	cmd := NewIntegration(appCtx, runCtx, manager, flags.NewFlags())
 
 	tasCmd := findChild(cmd, "tas")
 	g.Expect(tasCmd).ToNot(gomega.BeNil(), "child command 'tas' not found")
